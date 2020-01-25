@@ -7,12 +7,44 @@ import java.util.Map;
 
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 
 public class ServerFacade {
 
     private static Map<User, List<User>> followeesByFollower;
+    private static Map<User, List<User>> followersByFollowees;
+
+    public FollowerResponse getFollowers(FollowerRequest request){
+        assert request.getLimit() >= 0;
+        assert request.getFollower() != null;
+
+        if(followersByFollowees == null) {
+            followersByFollowees = initializeFollowees();
+        }
+
+        List<User> allFollowers = followersByFollowees.get(request.getFollower());
+        List<User> responseFollowers = new ArrayList<>(request.getLimit());
+
+        boolean hasMorePages = false;
+
+        if(request.getLimit() > 0) {
+            if (allFollowers != null) {
+                int followeesIndex = getFolloweesStartingIndex(request.getLastFollowee(), allFollowers);
+
+                for(int limitCounter = 0; followeesIndex < allFollowers.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+                    responseFollowers.add(allFollowers.get(followeesIndex));
+                }
+
+                hasMorePages = followeesIndex < allFollowers.size();
+            }
+        }
+
+        return new FollowerResponse(responseFollowers, hasMorePages);
+    }
+
 
     public FollowingResponse getFollowees(FollowingRequest request) {
 
@@ -85,6 +117,28 @@ public class ServerFacade {
         }
 
         return followeesByFollower;
+    }
+
+    private Map<User, List<User>> initializeFollowers() {
+
+        Map<User, List<User>> followersByFollowee = new HashMap<>();
+
+        List<Follow> follows = getFollowGenerator().generateUsersAndFollows(100,
+                0, 50, FollowGenerator.Sort.FOLLOWEE_FOLLOWER);
+
+        // Populate a map of followers, keyed by follower so we can easily handle follower requests
+        for(Follow follow : follows) {
+            List<User> followers = followersByFollowees.get(follow.getFollower());
+
+            if(followers == null) {
+                followers = new ArrayList<>();
+                followersByFollowees.put(follow.getFollower(), followers);
+            }
+
+            followers.add(follow.getFollowee());
+        }
+
+        return followersByFollowee;
     }
 
     /**
