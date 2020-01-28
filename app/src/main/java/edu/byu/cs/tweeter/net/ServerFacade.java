@@ -7,12 +7,15 @@ import java.util.Map;
 
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.net.request.LoginRequest;
+import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
+import edu.byu.cs.tweeter.net.response.SignUpResponse;
 
 public class ServerFacade {
 
@@ -56,6 +59,7 @@ public class ServerFacade {
         if(followeesByFollower == null) {
             followeesByFollower = initializeFollowees();
         }
+        System.out.print(followeesByFollower);
 
         List<User> allFollowees = followeesByFollower.get(request.getFollower());
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
@@ -155,7 +159,6 @@ public class ServerFacade {
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
 
-        System.out.println(loginRequest.getPassword());
         if(!loginRequest.getUsername().equals("Test")){
             return new LoginResponse("Invalid Username", true);
         }
@@ -165,5 +168,13 @@ public class ServerFacade {
         else {
             return new LoginResponse("Login successful!", false);
         }
+    }
+
+    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
+        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
+                signUpRequest.getImageURL());
+        LoginService.getInstance().setCurrentUser(signedUpUser);
+
+        return new SignUpResponse("Signed up successfully!", false);
     }
 }

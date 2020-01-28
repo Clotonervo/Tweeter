@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.presenter.LoginPresenter;
-import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.LoginTask;
 
 public class LoginActivity extends AppCompatActivity implements LoginPresenter.View, LoginTask.LoginContext {

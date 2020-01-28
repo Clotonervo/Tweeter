@@ -31,8 +31,7 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="sheila" />
+                android:inputType="textPersonName" />
         </LinearLayout>
 
         <LinearLayout
@@ -53,8 +52,7 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="parker" />
+                android:inputType="textPersonName" />
         </LinearLayout>
 
         <LinearLayout

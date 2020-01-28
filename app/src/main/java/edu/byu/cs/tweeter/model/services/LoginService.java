@@ -8,7 +8,6 @@ import edu.byu.cs.tweeter.net.response.LoginResponse;
 public class LoginService {
 
     private static LoginService instance;
-
     private User currentUser;
 
     public static LoginService getInstance() {
