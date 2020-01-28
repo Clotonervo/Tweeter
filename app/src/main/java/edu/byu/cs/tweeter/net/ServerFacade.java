@@ -9,8 +9,10 @@ import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.net.response.LoginResponse;
 
 public class ServerFacade {
 
@@ -149,5 +151,19 @@ public class ServerFacade {
      */
     FollowGenerator getFollowGenerator() {
         return FollowGenerator.getInstance();
+    }
+
+    public LoginResponse authenticateUser(LoginRequest loginRequest){
+
+        System.out.println(loginRequest.getPassword());
+        if(!loginRequest.getUsername().equals("Test")){
+            return new LoginResponse("Invalid Username", true);
+        }
+        else if (!loginRequest.getPassword().equals("password")){
+            return new LoginResponse("Invalid Password", true);
+        }
+        else {
+            return new LoginResponse("Login successful!", false);
+        }
     }
 }

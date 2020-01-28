@@ -17,8 +17,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up_activity);
         presenter = new SignUpPresenter(this);
-
-
     }
 
     public void register(View v){

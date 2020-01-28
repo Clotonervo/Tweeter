@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="sheila" />
+                android:text="Test" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="parker" />
+                android:text="password" />
         </LinearLayout>
 
         <LinearLayout

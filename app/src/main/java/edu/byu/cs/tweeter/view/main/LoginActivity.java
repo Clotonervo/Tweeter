@@ -5,18 +5,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import edu.byu.cs.tweeter.R;
+import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.presenter.LoginPresenter;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
+import edu.byu.cs.tweeter.view.asyncTasks.LoginTask;
 
-public class LoginActivity extends AppCompatActivity implements LoginPresenter.View {
-
-//    private LoginListener loginListener;
-//    private TextWatcher mWatcher;
-//    private RegisterRequest mRegisterRequest;
-//    private LoginRequest mLoginRequest;
+public class LoginActivity extends AppCompatActivity implements LoginPresenter.View, LoginTask.LoginContext {
 
     private EditText mUsername;
     private EditText mPassword;
@@ -32,36 +30,17 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         presenter = new LoginPresenter(this);
-//        mLoginRequest = new LoginRequest();
 
-//        mLoginButton = this.findViewById(R.id.loginButton);
-//        mSignUpButton = this.findViewById(R.id.signUpButton);
-
-//        mLoginButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                setContentView(R.layout.activity_main);
-//            }
-//        });
-//
-//        mSignUpButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                Intent intent = new Intent(this, MainActivity.class);
-//
-//                setContentView(R.layout.sign_up_activity);
-//            }
-//        });
+        mUsername = this.findViewById(R.id.usernameInput);
+        mPassword = this.findViewById(R.id.passwordInput);
 
     }
 
     public void login(View v){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        LoginTask loginTask = new LoginTask(this, presenter);
+        LoginRequest loginRequest = new LoginRequest(mUsername.getText().toString(), mPassword.getText().toString());
+
+        loginTask.execute(loginRequest);
     }
 
     public void signUp(View v){
@@ -69,100 +48,17 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
         startActivity(intent);
     }
 
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//
-//        mUsername = v.findViewById(R.id.usernameInput);
-//        mUsername.addTextChangedListener(mWatcher);
-//
-//        mPassword = v.findViewById(R.id.passwordInput);
-//        mPassword.addTextChangedListener(mWatcher);
-//
-//        mFirstName = v.findViewById(R.id.firstNameInput);
-//        mFirstName.addTextChangedListener(mWatcher);
-//
-//        mLastName = v.findViewById(R.id.lastNameInput);
-//        mLastName.addTextChangedListener(mWatcher);
-//
-//        mEmail = v.findViewById(R.id.emailInput);
-//        mEmail.addTextChangedListener(mWatcher);
-//
-//
-//        mLoginButton = v.findViewById(R.id.loginButton);
-//        mRegisterButton = v.findViewById(R.id.registerButton);
-//        validate();
-//
-//        mLoginButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//
-//                mLoginRequest.setLoginUserName(mUsername.getText().toString());
-//                mLoginRequest.setLoginPassWord(mPassword.getText().toString());
-//                LoginTask loginTask = new LoginTask(mServerHost.getText().toString(),
-//                        mIPAddress.getText().toString(),
-//                        LoginFragment.this);
-//
-//                loginTask.execute(mLoginRequest);
-//            }
-//        });
-//
-//        mRegisterButton.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//
-//                mRegisterRequest.setUserNameID(mUsername.getText().toString());
-//                mRegisterRequest.setUserEmail(mEmail.getText().toString());
-//                mRegisterRequest.setUserFirstName(mFirstName.getText().toString());
-//                mRegisterRequest.setUserLastName(mLastName.getText().toString());
-//                mRegisterRequest.setUserPassword(mPassword.getText().toString());
-//
-//                RegisterTask regTask = new RegisterTask(mServerHost.getText().toString(),
-//                        mIPAddress.getText().toString(),
-//                        LoginFragment.this);
-//
-//                regTask.execute(mRegisterRequest);
-//            }
-//        });
-//
-//
-//        return v;
-//    }
+    @Override
+    public void onExecuteComplete(String message, Boolean error){
+        System.out.println(message);
+        if(error) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+    }
 
-    //--****************************-- onExecuteComplete --*******************************--
-//    @Override
-//    public void onExecuteComplete(String message)
-//    {
-//        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-//        loginListener.loginComplete();
-//    }
-//
-//    ////////// Public Interface for Tasks ////////////
-//    public interface LoginListener {
-//        void loginComplete();
-//    }
-//
-//    public void setLoginListener(LoginListener logListen)
-//    {
-//        loginListener = logListen;
-//    }
-//
-//    ////////////// TextWatcher //////////////
-//    private class Enabler implements TextWatcher {
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            validate();
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {}
-//
-//    }
-//}
 }
