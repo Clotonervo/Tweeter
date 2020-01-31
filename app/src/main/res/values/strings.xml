@@ -18,6 +18,8 @@
     <string name="male_button">Male</string>
     <string name="female_button">Female</string>
 
+    <string name="sample_post">Message</string>
+
 
 
     <string name="sampleAlias">"@UserAlias"</string>
