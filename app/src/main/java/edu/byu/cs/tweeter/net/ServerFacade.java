@@ -6,16 +6,19 @@ import java.util.List;
 import java.util.Map;
 
 import edu.byu.cs.tweeter.model.domain.Follow;
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.net.request.SignUpRequest;
+import edu.byu.cs.tweeter.net.request.StoryRequest;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
+import edu.byu.cs.tweeter.net.response.StoryResponse;
 
 public class ServerFacade {
 
@@ -176,5 +179,16 @@ public class ServerFacade {
         LoginService.getInstance().setCurrentUser(signedUpUser);
 
         return new SignUpResponse("Signed up successfully!", false);
+    }
+
+    public StoryResponse getStory(StoryRequest storyRequest){
+        User user = storyRequest.getUser();
+        List<Status> statusList = new ArrayList<>();
+
+        for(int i = 1; i < 30; i++){
+            statusList.add(new Status(user, "Test status " + i));
+        }
+
+        return new StoryResponse("Good stuff", statusList, false, true);
     }
 }

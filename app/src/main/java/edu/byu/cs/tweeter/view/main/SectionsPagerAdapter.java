@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.view.main.follower.FollowerFragment;
 import edu.byu.cs.tweeter.view.main.following.FollowingFragment;
+import edu.byu.cs.tweeter.view.main.story.StoryFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -18,6 +19,7 @@ import edu.byu.cs.tweeter.view.main.following.FollowingFragment;
  */
 class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    private static final int STORY_FRAGMENT_POSITION = 1;
     private static final int FOLLOWING_FRAGMENT_POSITION = 2;
     private static final int FOLLOWER_FRAGMENT_POSITION = 3;
 
@@ -36,6 +38,8 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
             return new FollowingFragment();
         } else if (position == FOLLOWER_FRAGMENT_POSITION){
             return new FollowerFragment();
+        } else if (position == STORY_FRAGMENT_POSITION){
+            return new StoryFragment();
         } else {
             return PlaceholderFragment.newInstance(position + 1);
         }
