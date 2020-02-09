@@ -1,5 +1,8 @@
 package edu.byu.cs.tweeter.presenter;
 
+import edu.byu.cs.tweeter.model.services.LoginService;
+import edu.byu.cs.tweeter.net.response.SignOutResponse;
+
 public class MainPresenter extends Presenter {
 
     private final View view;
@@ -14,4 +17,15 @@ public class MainPresenter extends Presenter {
     public MainPresenter(View view) {
         this.view = view;
     }
+
+    public SignOutResponse signOut(){               //FIXME: Come up with a better way to do this?
+        LoginService.getInstance().setCurrentUser(null);
+        return new SignOutResponse(true, "Logged out!");
+    }
+
+    public void sendPostInfo(String message){
+        System.out.print("got here!");
+        return;
+    }
+
 }

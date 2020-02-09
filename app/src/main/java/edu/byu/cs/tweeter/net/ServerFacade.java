@@ -1,6 +1,8 @@
 package edu.byu.cs.tweeter.net;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +11,17 @@ import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.LoginService;
+import edu.byu.cs.tweeter.net.request.FeedRequest;
 import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.net.request.StoryRequest;
+import edu.byu.cs.tweeter.net.response.FeedResponse;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
+import edu.byu.cs.tweeter.net.response.PostResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
 import edu.byu.cs.tweeter.net.response.StoryResponse;
 
@@ -25,12 +30,14 @@ public class ServerFacade {
     private static Map<User, List<User>> followeesByFollower;
     private static Map<User, List<User>> followersByFollowees;
 
+    private static Map<User, List<Status>> userStatuses;
+
     public FollowerResponse getFollowers(FollowerRequest request){
         assert request.getLimit() >= 0;
         assert request.getFollower() != null;
 
         if(followersByFollowees == null) {
-            followersByFollowees = initializeFollowees();
+            followersByFollowees = initializeFollowers();
         }
 
         List<User> allFollowers = followersByFollowees.get(request.getFollower());
@@ -130,7 +137,7 @@ public class ServerFacade {
 
     private Map<User, List<User>> initializeFollowers() {
 
-        Map<User, List<User>> followersByFollowee = new HashMap<>();
+        followersByFollowees = new HashMap<>();
 
         List<Follow> follows = getFollowGenerator().generateUsersAndFollows(100,
                 0, 50, FollowGenerator.Sort.FOLLOWEE_FOLLOWER);
@@ -147,7 +154,7 @@ public class ServerFacade {
             followers.add(follow.getFollowee());
         }
 
-        return followersByFollowee;
+        return followersByFollowees;
     }
 
     /**
@@ -173,6 +180,27 @@ public class ServerFacade {
         }
     }
 
+    private Map<User, List<Status>> initializeStatuses() {
+
+        if(followeesByFollower == null){
+            followeesByFollower = initializeFollowees();
+        }
+
+        userStatuses = new HashMap<>();
+
+        for (Map.Entry<User, List<User>> entry : followeesByFollower.entrySet()) {
+            User currentUser = entry.getKey();
+            List<Status> statusList = new ArrayList<>();
+            for(int i = 1; i < 5; i++){
+                statusList.add(new Status(currentUser, "Test status " + i));
+            }
+            userStatuses.put(currentUser, statusList);
+        }
+
+        return userStatuses;
+    }
+
+
     public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
         User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
                 signUpRequest.getImageURL());
@@ -183,12 +211,66 @@ public class ServerFacade {
 
     public StoryResponse getStory(StoryRequest storyRequest){
         User user = storyRequest.getUser();
-        List<Status> statusList = new ArrayList<>();
 
-        for(int i = 1; i < 30; i++){
-            statusList.add(new Status(user, "Test status " + i));
+        if(userStatuses == null){
+            userStatuses = initializeStatuses();
         }
+        List<Status> statusList = userStatuses.get(user);
+
 
         return new StoryResponse("Good stuff", statusList, false, true);
+    }
+
+    public FeedResponse getFeed(FeedRequest feedRequest){
+        User user = feedRequest.getUser();
+        boolean hasMorePages = true;
+
+        if(userStatuses == null){
+            userStatuses = initializeStatuses();
+        }
+
+        List<Status> statusList = new ArrayList<>();
+
+        List<User> following = followeesByFollower.get(user);
+
+        for (int i = 0; i < following.size(); i++){
+//            List<Status> temp = userStatuses.get(following.get(i));
+            statusList.addAll(userStatuses.get(following.get(i)));
+
+        }
+
+        Collections.sort(statusList, new Comparator<Status>() {
+            public int compare(Status o1, Status o2) {
+                return o1.getTimeStamp().compareTo(o2.getTimeStamp());
+            }
+        });
+
+
+        return new FeedResponse(true, "No Error", hasMorePages, statusList, following);
+
+    }
+
+
+    public PostResponse post(Status postedStatus){
+        User user = postedStatus.getUser();
+
+        if(userStatuses == null){
+            userStatuses = initializeStatuses();
+        }
+
+        List<Status> temp = userStatuses.get(user);
+
+        userStatuses.get(user).add(postedStatus);
+
+        Collections.sort(userStatuses.get(user), new Comparator<Status>() {
+            public int compare(Status o1, Status o2) {
+                return o2.getTimeStamp().compareTo(o1.getTimeStamp());
+            }
+        });
+
+        temp = userStatuses.get(user);
+
+        return new PostResponse(true, "Everything smooth");
+
     }
 }

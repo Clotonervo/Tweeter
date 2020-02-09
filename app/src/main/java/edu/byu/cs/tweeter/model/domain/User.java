@@ -2,6 +2,7 @@ package edu.byu.cs.tweeter.model.domain;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 public class User implements Comparable<User> {
@@ -41,6 +42,8 @@ public class User implements Comparable<User> {
     public String getImageUrl() {
         return imageUrl;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

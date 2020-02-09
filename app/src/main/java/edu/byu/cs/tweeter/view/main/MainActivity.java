@@ -1,30 +1,45 @@
 package edu.byu.cs.tweeter.view.main;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.net.response.SignOutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.LoadImageTask;
+import edu.byu.cs.tweeter.view.asyncTasks.PostTask;
+import edu.byu.cs.tweeter.view.asyncTasks.SignOutTask;
+import edu.byu.cs.tweeter.view.asyncTasks.SignUpTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
 
-public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View {
+public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutContext {
 
     private MainPresenter presenter;
     private User user;
     private ImageView userImageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +54,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                goToPostActivity();
+
             }
         });
 
@@ -76,4 +93,29 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
             userImageView.setImageDrawable(drawables[0]);
         }
     }
+
+    public void signOut(View v){
+        SignOutTask signOutTask = new SignOutTask(this, presenter);
+        signOutTask.execute();
+    }
+
+    public void goToPostActivity(){
+        Intent intent = new Intent(this, PostActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onExecuteComplete(String message, Boolean success){
+        System.out.println(message);
+        if(!success) {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+    }
+
 }

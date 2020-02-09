@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
         else {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }

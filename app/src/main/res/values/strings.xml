@@ -20,6 +20,12 @@
 
     <string name="sample_post">Message</string>
 
+    <string name="sign_out">Sign Out</string>
+
+    <string name="post">Post</string>
+    <string name="post_prompt">Post a new Status:</string>
+    <string name="post_hint">Write something here</string>
+
 
 
     <string name="sampleAlias">"@UserAlias"</string>

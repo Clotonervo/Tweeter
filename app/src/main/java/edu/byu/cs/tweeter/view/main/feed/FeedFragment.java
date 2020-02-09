@@ -1,6 +1,5 @@
-package edu.byu.cs.tweeter.view.main.story;
+package edu.byu.cs.tweeter.view.main.feed;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,37 +20,37 @@ import androidx.recyclerview.widget.RecyclerView;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.net.request.StoryRequest;
-import edu.byu.cs.tweeter.net.response.StoryResponse;
-import edu.byu.cs.tweeter.presenter.StoryPresenter;
-import edu.byu.cs.tweeter.view.asyncTasks.GetStoryTask;
+import edu.byu.cs.tweeter.net.request.FeedRequest;
+import edu.byu.cs.tweeter.net.response.FeedResponse;
+import edu.byu.cs.tweeter.presenter.FeedPresenter;
+import edu.byu.cs.tweeter.view.asyncTasks.GetFeedTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
 
-public class StoryFragment extends Fragment implements StoryPresenter.View {
+public class FeedFragment extends Fragment implements FeedPresenter.View{
 
     private static final int LOADING_DATA_VIEW = 0;
     private static final int ITEM_VIEW = 1;
 
     private static final int PAGE_SIZE = 10;
 
-    private StoryPresenter presenter;
-    private StoryRecyclerViewAdapter storyRecyclerViewAdapter;
+    private FeedPresenter presenter;
+    private FeedRecyclerViewAdapter feedRecyclerViewAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_story, container, false);
+        View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        presenter = new StoryPresenter(this);
+        presenter = new FeedPresenter(this);
 
-        RecyclerView storyRecyclerView = view.findViewById(R.id.storyRecylerView);
+        RecyclerView feedRecyclerView = view.findViewById(R.id.feedRecyclerView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        storyRecyclerView.setLayoutManager(layoutManager);
+        feedRecyclerView.setLayoutManager(layoutManager);
 
-        storyRecyclerViewAdapter = new StoryRecyclerViewAdapter();
-        storyRecyclerView.setAdapter(storyRecyclerViewAdapter);
-        storyRecyclerView.addOnScrollListener(new StatusRecyclerViewPaginationScrollListener(layoutManager));
+        feedRecyclerViewAdapter = new FeedRecyclerViewAdapter();
+        feedRecyclerView.setAdapter(feedRecyclerViewAdapter);
+        feedRecyclerView.addOnScrollListener(new StatusRecyclerViewPaginationScrollListener(layoutManager));
 
         return view;
     }
@@ -88,7 +87,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         }
     }
 
-    private class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StatusHolder> implements GetStoryTask.GetStoryObserver {
+    private class FeedRecyclerViewAdapter extends RecyclerView.Adapter<StatusHolder> implements GetFeedTask.GetFeedObserver {
 
         private final List<Status> statuses = new ArrayList<>();
 
@@ -96,7 +95,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         private boolean hasMorePages;
         private boolean isLoading = false;
 
-        StoryRecyclerViewAdapter() {
+        FeedRecyclerViewAdapter() {
             loadMoreItems();
         }
 
@@ -120,14 +119,14 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         @NonNull
         @Override
         public StatusHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(StoryFragment.this.getContext());
+            LayoutInflater layoutInflater = LayoutInflater.from(FeedFragment.this.getContext());
             View view;
 
             if(isLoading) {
                 view =layoutInflater.inflate(R.layout.loading_row, parent, false);
 
             } else {
-                view = layoutInflater.inflate(R.layout.story_row, parent, false);
+                view = layoutInflater.inflate(R.layout.feed_row, parent, false);
             }
 
             return new StatusHolder(view);
@@ -155,21 +154,21 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             isLoading = true;
             addLoadingFooter();
 
-            GetStoryTask getStoryTask = new GetStoryTask(presenter, this);
-            StoryRequest request = new StoryRequest(presenter.getCurrentUser(), PAGE_SIZE, lastStatus); //FIXME: This should be bringing items just from that on
-            getStoryTask.execute(request);
+            GetFeedTask getfeedTask = new GetFeedTask(presenter, this);
+            FeedRequest request = new FeedRequest(presenter.getCurrentUser(), PAGE_SIZE, lastStatus); //FIXME: This should be bringing items just from that on
+            getfeedTask.execute(request);
         }
 
         @Override
-        public void storyRetrieved(StoryResponse storyResponse) {
-            List<Status> statusList = storyResponse.getStatusList();
+        public void feedRetrieved(FeedResponse feedResponse) {
+            List<Status> statusList = feedResponse.getStatuses();
 
             lastStatus = (statusList.size() > 0) ? statusList.get(statusList.size() -1) : null;
-            hasMorePages = storyResponse.hasMorePages();
+            hasMorePages = feedResponse.hasMorePages();
 
             isLoading = false;
             removeLoadingFooter();
-            storyRecyclerViewAdapter.addItems(statusList);
+            feedRecyclerViewAdapter.addItems(statusList);
         }
 
         private void addLoadingFooter() {
@@ -198,10 +197,10 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             int totalItemCount = layoutManager.getItemCount();
             int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-            if (!storyRecyclerViewAdapter.isLoading && storyRecyclerViewAdapter.hasMorePages) {
+            if (!feedRecyclerViewAdapter.isLoading && feedRecyclerViewAdapter.hasMorePages) {
                 if ((visibleItemCount + firstVisibleItemPosition) >=
                         totalItemCount && firstVisibleItemPosition >= 0) {
-                    storyRecyclerViewAdapter.loadMoreItems();
+                    feedRecyclerViewAdapter.loadMoreItems();
                 }
             }
         }

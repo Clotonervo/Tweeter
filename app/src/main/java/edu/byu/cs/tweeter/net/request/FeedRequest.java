@@ -3,20 +3,19 @@ package edu.byu.cs.tweeter.net.request;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class StoryRequest {
+public class FeedRequest {
 
     private User user;
-    private final int limit;
     private Status lastStatus;
+    private final int limit;
 
-
-    public StoryRequest(User user, int limit, Status lastStatus){
+    public FeedRequest(User user, int limit, Status lastStatus){
         this.user = user;
         this.limit = limit;
         this.lastStatus = lastStatus;
     }
 
-    public StoryRequest(User user){
+    public FeedRequest(User user) {
         this.user = user;
         this.limit = 0;
     }
@@ -29,15 +28,5 @@ public class StoryRequest {
         this.user = user;
     }
 
-    public int getLimit() {
-        return limit;
-    }
 
-    public Status getLastStatus() {
-        return lastStatus;
-    }
-
-    public void setLastStatus(Status lastStatus) {
-        this.lastStatus = lastStatus;
-    }
 }
