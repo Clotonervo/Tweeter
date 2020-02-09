@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.view.main.follower;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.presenter.FollowerPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowerTask;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
+import edu.byu.cs.tweeter.view.main.MainActivity;
 
 public class FollowerFragment extends Fragment implements FollowerPresenter.View {
 
@@ -64,7 +67,7 @@ public class FollowerFragment extends Fragment implements FollowerPresenter.View
         private final TextView userAlias;
         private final TextView userName;
 
-        FollowerHolder(@NonNull View itemView) {
+        FollowerHolder(@NonNull final View itemView) {
             super(itemView);
 
             userImage = itemView.findViewById(R.id.userImage);
@@ -75,6 +78,10 @@ public class FollowerFragment extends Fragment implements FollowerPresenter.View
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
+                    LoginService.getInstance().setCurrentUser(presenter.getUserByAlias(userAlias.getText().toString()));
+
+                    Intent intent = new Intent(view.getContext(), MainActivity.class);
+                    itemView.getContext().startActivity(intent);
                 }
             });
         }

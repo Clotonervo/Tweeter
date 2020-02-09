@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.view.main.feed;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +21,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.request.FeedRequest;
 import edu.byu.cs.tweeter.net.response.FeedResponse;
 import edu.byu.cs.tweeter.presenter.FeedPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFeedTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
+import edu.byu.cs.tweeter.view.main.MainActivity;
 
 public class FeedFragment extends Fragment implements FeedPresenter.View{
 
@@ -63,7 +66,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
         private final TextView userName;
         private final TextView message;
 
-        StatusHolder(@NonNull View itemView) {
+        StatusHolder(@NonNull final View itemView) {
             super(itemView);
 
             userImage = itemView.findViewById(R.id.userImage);
@@ -75,6 +78,10 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
+                    LoginService.getInstance().setCurrentUser(presenter.getUserByAlias(userAlias.getText().toString()));
+
+                    Intent intent = new Intent(view.getContext(), MainActivity.class);
+                    itemView.getContext().startActivity(intent);
                 }
             });
         }
@@ -155,7 +162,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
             addLoadingFooter();
 
             GetFeedTask getfeedTask = new GetFeedTask(presenter, this);
-            FeedRequest request = new FeedRequest(presenter.getCurrentUser(), PAGE_SIZE, lastStatus); //FIXME: This should be bringing items just from that on
+            FeedRequest request = new FeedRequest(presenter.getCurrentUser(), PAGE_SIZE, lastStatus);
             getfeedTask.execute(request);
         }
 

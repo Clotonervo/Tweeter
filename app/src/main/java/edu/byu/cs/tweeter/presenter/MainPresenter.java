@@ -20,12 +20,8 @@ public class MainPresenter extends Presenter {
 
     public SignOutResponse signOut(){               //FIXME: Come up with a better way to do this?
         LoginService.getInstance().setCurrentUser(null);
+        LoginService.getInstance().setLoggedInUser(null);
         return new SignOutResponse(true, "Logged out!");
-    }
-
-    public void sendPostInfo(String message){
-        System.out.print("got here!");
-        return;
     }
 
 }

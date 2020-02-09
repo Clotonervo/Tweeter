@@ -91,6 +91,7 @@ public class FollowGenerator {
         assert minFollowersPerUser >= 0 : minFollowersPerUser;
         assert maxFollowersPerUser < users.size() : maxFollowersPerUser;
 
+
         // For each user, generate a random number of followers between the specified min and max
         Random random = new Random();
         for(User user : users) {
@@ -103,9 +104,16 @@ public class FollowGenerator {
         // Add the test user and make him follow everyone
         User testUser = new User("Test", "User", UserGenerator.MALE_IMAGE_URL);
 
+        int index = 0;
+
         for(User user : users) {
             Follow follow = new Follow(testUser, user);
+            if (index % 3 == 0) {
+                Follow follow2 = new Follow(user, testUser);
+                follows.add(follow2);
+            }
             follows.add(follow);
+            index++;
         }
 
         // Sort by the specified sort order

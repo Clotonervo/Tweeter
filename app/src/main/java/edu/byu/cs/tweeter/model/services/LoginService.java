@@ -9,6 +9,7 @@ public class LoginService {
 
     private static LoginService instance;
     private User currentUser;
+    private User loggedInUser;
 
     public static LoginService getInstance() {
         if(instance == null) {
@@ -28,6 +29,14 @@ public class LoginService {
         this.currentUser = currentUser;
     }
 
+    public User getLoggedInUser() {
+        return this.loggedInUser;
+    }
+
+    public void setLoggedInUser(User loggedInUser) {
+        this.loggedInUser = loggedInUser;
+    }
+
     public LoginResponse authenticateUser(LoginRequest loginRequest){
         // TODO: Communicate with server and return data given.
         ServerFacade server = new ServerFacade();
@@ -39,7 +48,13 @@ public class LoginService {
             currentUser = new User("Test", "User",
                     "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
             setCurrentUser(currentUser);
+            setLoggedInUser(currentUser);
             return loginResponse;
         }
+    }
+
+    public User aliasToUser(String alias){
+        ServerFacade serverFacade = new ServerFacade();
+        return serverFacade.aliasToUser(alias);
     }
 }

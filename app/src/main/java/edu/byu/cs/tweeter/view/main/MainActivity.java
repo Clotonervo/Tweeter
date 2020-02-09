@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.response.SignOutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.LoadImageTask;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     private MainPresenter presenter;
     private User user;
     private ImageView userImageView;
+    private Button signOutButton;
 
 
     @Override
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         setContentView(R.layout.activity_main);
 
         presenter = new MainPresenter(this);
+        user = presenter.getCurrentUser();
+
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -54,20 +59,26 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+        signOutButton = findViewById(R.id.signOutButton);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 goToPostActivity();
 
             }
         });
 
+        if(user != presenter.getLoggedInUser()){
+            fab.hide();
+            signOutButton.setVisibility(View.INVISIBLE);
+        }
+
         userImageView = findViewById(R.id.userImage);
 
-        user = presenter.getCurrentUser();
 
         // Asynchronously load the user's image
         LoadImageTask loadImageTask = new LoadImageTask(this);
@@ -79,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         TextView userAlias = findViewById(R.id.userAlias);
         userAlias.setText(user.getAlias());
     }
+
 
     @Override
     public void imageLoadProgressUpdated(Integer progress) {
@@ -116,6 +128,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());        //FIXME: Also maybe factor this into its own class
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 }

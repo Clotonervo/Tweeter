@@ -30,6 +30,8 @@ public class ServerFacade {
     private static Map<User, List<User>> followeesByFollower;
     private static Map<User, List<User>> followersByFollowees;
 
+    private static List<Follow> follows;
+
     private static Map<User, List<Status>> userStatuses;
 
     public FollowerResponse getFollowers(FollowerRequest request){
@@ -37,7 +39,7 @@ public class ServerFacade {
         assert request.getFollower() != null;
 
         if(followersByFollowees == null) {
-            followersByFollowees = initializeFollowers();
+            initializeFollowers();
         }
 
         List<User> allFollowers = followersByFollowees.get(request.getFollower());
@@ -117,7 +119,7 @@ public class ServerFacade {
 
         Map<User, List<User>> followeesByFollower = new HashMap<>();
 
-        List<Follow> follows = getFollowGenerator().generateUsersAndFollows(100,
+        follows = getFollowGenerator().generateUsersAndFollows(100,
                 0, 50, FollowGenerator.Sort.FOLLOWER_FOLLOWEE);
 
         // Populate a map of followees, keyed by follower so we can easily handle followee requests
@@ -132,27 +134,28 @@ public class ServerFacade {
             followees.add(follow.getFollowee());
         }
 
-        return followeesByFollower;
-    }
-
-    private Map<User, List<User>> initializeFollowers() {
-
         followersByFollowees = new HashMap<>();
 
-        List<Follow> follows = getFollowGenerator().generateUsersAndFollows(100,
-                0, 50, FollowGenerator.Sort.FOLLOWEE_FOLLOWER);
-
-        // Populate a map of followers, keyed by follower so we can easily handle follower requests
         for(Follow follow : follows) {
-            List<User> followers = followersByFollowees.get(follow.getFollower());
+            List<User> followers = followersByFollowees.get(follow.getFollowee());
 
             if(followers == null) {
                 followers = new ArrayList<>();
-                followersByFollowees.put(follow.getFollower(), followers);
+                followersByFollowees.put(follow.getFollowee(), followers);
             }
 
-            followers.add(follow.getFollowee());
+            followers.add(follow.getFollower());
         }
+
+
+        return followeesByFollower;
+    }
+
+
+    private Map<User, List<User>> initializeFollowers() {
+
+
+        initializeFollowees();
 
         return followersByFollowees;
     }
@@ -205,6 +208,7 @@ public class ServerFacade {
         User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
                 signUpRequest.getImageURL());
         LoginService.getInstance().setCurrentUser(signedUpUser);
+        LoginService.getInstance().setLoggedInUser(signedUpUser);
 
         return new SignUpResponse("Signed up successfully!", false);
     }
@@ -215,7 +219,9 @@ public class ServerFacade {
         if(userStatuses == null){
             userStatuses = initializeStatuses();
         }
-        List<Status> statusList = userStatuses.get(user);
+        List<Status> statusList = new ArrayList<>();
+
+        statusList = userStatuses.get(user);
 
 
         return new StoryResponse("Good stuff", statusList, false, true);
@@ -230,8 +236,9 @@ public class ServerFacade {
         }
 
         List<Status> statusList = new ArrayList<>();
+        List<User> following = new ArrayList<>();
 
-        List<User> following = followeesByFollower.get(user);
+        following = followeesByFollower.get(user);
 
         for (int i = 0; i < following.size(); i++){
 //            List<Status> temp = userStatuses.get(following.get(i));
@@ -271,6 +278,14 @@ public class ServerFacade {
         temp = userStatuses.get(user);
 
         return new PostResponse(true, "Everything smooth");
+    }
 
+    public User aliasToUser(String alias){
+        for (Map.Entry<User, List<User>> entry : followeesByFollower.entrySet()) {
+            if(entry.getKey().getAlias() == alias){
+                return entry.getKey();
+            }
+        }
+        return new User("null", "null", "null");
     }
 }
