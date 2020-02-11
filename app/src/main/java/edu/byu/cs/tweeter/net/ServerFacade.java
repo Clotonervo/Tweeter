@@ -18,12 +18,14 @@ import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.net.request.StoryRequest;
 import edu.byu.cs.tweeter.net.response.FeedResponse;
+import edu.byu.cs.tweeter.net.response.FollowResponse;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
 import edu.byu.cs.tweeter.net.response.PostResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
 import edu.byu.cs.tweeter.net.response.StoryResponse;
+import edu.byu.cs.tweeter.net.response.UnfollowResponse;
 
 public class ServerFacade {
 
@@ -287,5 +289,35 @@ public class ServerFacade {
             }
         }
         return new User("null", "null", "null");
+    }
+
+    public boolean isFollowing(Follow follow){
+        return followeesByFollower.get(follow.getFollower()).contains(follow.getFollowee());
+    }
+
+    public FollowResponse followUser(Follow follow){
+        if(followeesByFollower == null){
+            followeesByFollower = initializeFollowees();
+        }
+
+        if (followeesByFollower.get(follow.getFollower()).add(follow.getFollowee())){
+            return new FollowResponse(true, "User successfully followed");
+        }
+        else{
+            return new FollowResponse(false, "Something went wrong following user");
+        }
+    }
+
+    public UnfollowResponse unfollowUser(Follow follow){
+        if(followeesByFollower == null){
+            followeesByFollower = initializeFollowees();
+        }
+
+        if (followeesByFollower.get(follow.getFollower()).add(follow.getFollowee())){
+            return new UnfollowResponse(true, "User successfully unfollowed");
+        }
+        else{
+            return new UnfollowResponse(false, "Something went wrong unfollowing user");
+        }
     }
 }

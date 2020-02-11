@@ -1,7 +1,11 @@
 package edu.byu.cs.tweeter.presenter;
 
+import edu.byu.cs.tweeter.model.domain.Follow;
+import edu.byu.cs.tweeter.model.services.FollowingService;
 import edu.byu.cs.tweeter.model.services.LoginService;
+import edu.byu.cs.tweeter.net.response.FollowResponse;
 import edu.byu.cs.tweeter.net.response.SignOutResponse;
+import edu.byu.cs.tweeter.net.response.UnfollowResponse;
 
 public class MainPresenter extends Presenter {
 
@@ -22,6 +26,18 @@ public class MainPresenter extends Presenter {
         LoginService.getInstance().setCurrentUser(null);
         LoginService.getInstance().setLoggedInUser(null);
         return new SignOutResponse(true, "Logged out!");
+    }
+
+    public boolean isFollowing(Follow follow){
+        return FollowingService.getInstance().isFollowing(follow);
+    }
+
+    public FollowResponse followUser(Follow follow){                //FIXME: Is this right? Can i use the follow response object here?
+        return FollowingService.getInstance().followUser(follow);
+    }
+
+    public UnfollowResponse unFollowUser(Follow follow) {
+        return FollowingService.getInstance().unfollowUser(follow);
     }
 
 }
