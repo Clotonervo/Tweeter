@@ -26,22 +26,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.byu.cs.tweeter.R;
+import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.response.SignOutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
+import edu.byu.cs.tweeter.view.asyncTasks.FollowUserTask;
 import edu.byu.cs.tweeter.view.asyncTasks.LoadImageTask;
 import edu.byu.cs.tweeter.view.asyncTasks.PostTask;
 import edu.byu.cs.tweeter.view.asyncTasks.SignOutTask;
 import edu.byu.cs.tweeter.view.asyncTasks.SignUpTask;
+import edu.byu.cs.tweeter.view.asyncTasks.UnfollowUserTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
 
-public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutContext {
+public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutContext, FollowUserTask.FollowUserContext, UnfollowUserTask.UnfollowUserContext {
 
     private MainPresenter presenter;
     private User user;
     private ImageView userImageView;
     private Button signOutButton;
+    private Button followButton;
 
 
     @Override
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         tabs.setupWithViewPager(viewPager);
 
         signOutButton = findViewById(R.id.signOutButton);
-
+        followButton = findViewById(R.id.follow_toggle);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +79,19 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         if(user != presenter.getLoggedInUser()){
             fab.hide();
             signOutButton.setVisibility(View.INVISIBLE);
+            if (presenter.isFollowing(new Follow(presenter.getCurrentUser(), presenter.getLoggedInUser()))){        //FIXME: Debug this if statement and make sure its doing what it should
+                System.out.print("Logged in user is following current user");
+                followButton.setText(R.string.follow_button);
+                followUser();
+            }
+            else {
+                System.out.print("Logged in user is NOT following current user");
+                followButton.setText(R.string.unfollow_button);
+                unFollowUser();
+            }
+        }
+        else {
+            followButton.setVisibility(View.INVISIBLE);
         }
 
         userImageView = findViewById(R.id.userImage);
@@ -116,6 +133,16 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         startActivity(intent);
     }
 
+    public void followUser() {
+        FollowUserTask followUserTask = new FollowUserTask(this, presenter);
+        followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+    }
+
+    public void unFollowUser(){
+        UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
+        unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+    }
+
     @Override
     public void onExecuteComplete(String message, Boolean success){
         System.out.println(message);
@@ -128,6 +155,18 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onFollowComplete(String message, Boolean success)
+    {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUnfollowComplete(String message, Boolean success)
+    {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

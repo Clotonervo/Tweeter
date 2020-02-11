@@ -27,6 +27,10 @@
     <string name="post_hint">Write something here</string>
 
 
+    <string name="follow_button">Follow</string>
+    <string name="unfollow_button">Unfollow</string>
+
+
 
     <string name="sampleAlias">"@UserAlias"</string>
     <string name="sampleUserName">The User</string>

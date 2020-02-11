@@ -29,15 +29,28 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
+                android:id="@+id/follow_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="57dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toStartOf="@+id/signOutButton"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/title"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
                 android:id="@+id/signOutButton"
                 android:layout_width="0dp"
                 android:layout_height="52dp"
                 android:layout_marginStart="197dp"
-                android:layout_marginTop="11dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/sign_out"
                 android:onClick="signOut"
+                android:text="@string/sign_out"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/title"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

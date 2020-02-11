@@ -313,7 +313,7 @@ public class ServerFacade {
             followeesByFollower = initializeFollowees();
         }
 
-        if (followeesByFollower.get(follow.getFollower()).add(follow.getFollowee())){
+        if (followeesByFollower.get(follow.getFollower()).remove(follow.getFollowee())){
             return new UnfollowResponse(true, "User successfully unfollowed");
         }
         else{
