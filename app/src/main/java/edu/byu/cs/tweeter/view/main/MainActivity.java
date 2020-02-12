@@ -79,15 +79,13 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         if(user != presenter.getLoggedInUser()){
             fab.hide();
             signOutButton.setVisibility(View.INVISIBLE);
-            if (presenter.isFollowing(new Follow(presenter.getCurrentUser(), presenter.getLoggedInUser()))){        //FIXME: Debug this if statement and make sure its doing what it should
+            if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){        //TODO: Debug this if statement and make sure its doing what it should
                 System.out.print("Logged in user is following current user");
-                followButton.setText(R.string.follow_button);
-                followUser();
+                followButton.setText(R.string.unfollow_button);
             }
             else {
                 System.out.print("Logged in user is NOT following current user");
-                followButton.setText(R.string.unfollow_button);
-                unFollowUser();
+                followButton.setText(R.string.follow_button);
             }
         }
         else {
@@ -123,24 +121,37 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         }
     }
 
-    public void signOut(View v){
+    @Override
+    public void signOut(){
         SignOutTask signOutTask = new SignOutTask(this, presenter);
         signOutTask.execute();
     }
 
+    @Override
     public void goToPostActivity(){
         Intent intent = new Intent(this, PostActivity.class);
         startActivity(intent);
     }
 
-    public void followUser() {
-        FollowUserTask followUserTask = new FollowUserTask(this, presenter);
-        followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
-    }
+    @Override
+    public void followUser(View v) {
+        if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){
+            System.out.print("Logged in user is following current user");
+            UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
+            followButton.setText(R.string.follow_button);
+            unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
 
-    public void unFollowUser(){
-        UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
-        unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+
+        }
+        else {
+            System.out.print("Logged in user is NOT following current user");
+            FollowUserTask followUserTask = new FollowUserTask(this, presenter);
+            followButton.setText(R.string.unfollow_button);
+            followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+        }
+
+
+
     }
 
     @Override
@@ -172,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
-        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());        //FIXME: Also maybe factor this into its own class
+        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());        //TODO: Also maybe factor this into its own class
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

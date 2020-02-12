@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.presenter;
 
+import android.view.View;
+
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.services.FollowingService;
 import edu.byu.cs.tweeter.model.services.LoginService;
@@ -16,13 +18,16 @@ public class MainPresenter extends Presenter {
      */
     public interface View {
         // If needed, Specify methods here that will be called on the view in response to model updates
+        void signOut();
+        void goToPostActivity();
+        void followUser(android.view.View v);
     }
 
     public MainPresenter(View view) {
         this.view = view;
     }
 
-    public SignOutResponse signOut(){               //FIXME: Come up with a better way to do this?
+    public SignOutResponse signOut(){
         LoginService.getInstance().setCurrentUser(null);
         LoginService.getInstance().setLoggedInUser(null);
         return new SignOutResponse(true, "Logged out!");
@@ -32,7 +37,7 @@ public class MainPresenter extends Presenter {
         return FollowingService.getInstance().isFollowing(follow);
     }
 
-    public FollowResponse followUser(Follow follow){                //FIXME: Is this right? Can i use the follow response object here?
+    public FollowResponse followUser(Follow follow){
         return FollowingService.getInstance().followUser(follow);
     }
 

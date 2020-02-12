@@ -295,7 +295,7 @@ public class ServerFacade {
         return followeesByFollower.get(follow.getFollower()).contains(follow.getFollowee());
     }
 
-    public FollowResponse followUser(Follow follow){
+    public FollowResponse followUser(Follow follow){                //Should I resort the list alphabetically?
         if(followeesByFollower == null){
             followeesByFollower = initializeFollowees();
         }

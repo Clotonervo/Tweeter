@@ -36,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
 
     }
 
+    @Override
     public void register(View v){
         SignUpTask signUpTask = new SignUpTask(this, presenter);
         SignUpRequest signUpRequest = new SignUpRequest(mUsername.getText().toString(),

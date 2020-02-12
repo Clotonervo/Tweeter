@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
 
     }
 
+    @Override
     public void login(View v){
         LoginTask loginTask = new LoginTask(this, presenter);
         LoginRequest loginRequest = new LoginRequest(mUsername.getText().toString(), mPassword.getText().toString());
@@ -42,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
         loginTask.execute(loginRequest);
     }
 
+    @Override
     public void signUp(View v){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
