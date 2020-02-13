@@ -7,6 +7,8 @@ import edu.byu.cs.tweeter.net.response.FeedResponse;
 public class FeedService {
 
     private static FeedService instance;
+    private final ServerFacade serverFacade;
+
 
     public static FeedService getInstance() {
         if(instance == null) {
@@ -16,11 +18,11 @@ public class FeedService {
         return instance;
     }
 
-    private FeedService() {}
+    private FeedService() { serverFacade = ServerFacade.getInstance(); }
 
     public FeedResponse getFeed(FeedRequest feedRequest) {
         // TODO: Communicate with server and return data given.
-        ServerFacade server = new ServerFacade();
+        ServerFacade server = ServerFacade.getInstance();
         FeedResponse feedResponse = server.getFeed(feedRequest);
         return feedResponse;
     }

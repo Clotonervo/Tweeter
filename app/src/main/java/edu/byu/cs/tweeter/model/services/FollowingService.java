@@ -22,11 +22,11 @@ public class FollowingService {
     }
 
     private FollowingService() {
-        serverFacade = new ServerFacade();
+        serverFacade = ServerFacade.getInstance();
     }
 
     public FollowingResponse getFollowees(FollowingRequest request) {
-        return serverFacade.getFollowees(request);
+        return serverFacade.getFollowing(request);
     }
 
     public UnfollowResponse unfollowUser(Follow follow){

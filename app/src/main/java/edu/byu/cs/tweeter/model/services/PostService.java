@@ -7,6 +7,8 @@ import edu.byu.cs.tweeter.net.response.PostResponse;
 public class PostService {
 
     private static PostService instance;
+    private final ServerFacade serverFacade;
+
 
     public static PostService getInstance() {
         if(instance == null) {
@@ -16,13 +18,12 @@ public class PostService {
         return instance;
     }
 
-    private PostService() {}
+    private PostService() {serverFacade = ServerFacade.getInstance();}
 
     public PostResponse postStatus(String postedStatus){
         // TODO: Communicate with server and return data given.
-        ServerFacade server = new ServerFacade();
         Status status = new Status(LoginService.getInstance().getCurrentUser(), postedStatus);
-        PostResponse postResponse = server.post(status);
+        PostResponse postResponse = serverFacade.post(status);
         return postResponse;
     }
 }

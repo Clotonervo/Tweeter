@@ -8,6 +8,8 @@ import edu.byu.cs.tweeter.net.response.SignUpResponse;
 public class SignUpService {
 
     private static SignUpService instance;
+    private final ServerFacade serverFacade;
+
 
     public static SignUpService getInstance() {
         if(instance == null) {
@@ -17,12 +19,11 @@ public class SignUpService {
         return instance;
     }
 
-    private SignUpService() {}
+    private SignUpService() {serverFacade = ServerFacade.getInstance();}
 
     public SignUpResponse authenticateUser(SignUpRequest signUpRequest){
         // TODO: Communicate with server and return data given.
-        ServerFacade server = new ServerFacade();
-        SignUpResponse signUpResponse = server.registerNewUser(signUpRequest);
+        SignUpResponse signUpResponse = serverFacade.registerNewUser(signUpRequest);
         return signUpResponse;
     }
 }

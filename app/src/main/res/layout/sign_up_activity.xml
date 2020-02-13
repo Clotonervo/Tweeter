@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,7 +32,8 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:text="x" />
         </LinearLayout>
 
         <LinearLayout
@@ -52,7 +54,8 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:text="x" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,7 +76,8 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:text="x" />
         </LinearLayout>
 
         <LinearLayout
@@ -94,7 +98,8 @@
                 android:layout_width="255dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:text="x" />
         </LinearLayout>
 
         <LinearLayout
@@ -103,37 +108,19 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView"
+            <Button
+                android:id="@+id/uploadButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/email_sign_up"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Widget.ActionMode.Subtitle" />
+                android:text="@string/upload_photo" />
 
-            <EditText
-                android:id="@+id/emailInput"
-                android:layout_width="255dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="600px"
+                android:layout_height="600px"
+                tools:srcCompat="@tools:sample/avatars" />
         </LinearLayout>
 
-        <RadioGroup
-            android:layout_width="181dp"
-            android:layout_height="60dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:text="@string/male_button"
-                android:layout_width="90dp"
-                android:layout_height="50dp"
-                android:id="@+id/maleButton"/>
-            <RadioButton
-                android:text="@string/female_button"
-                android:layout_width="90dp"
-                android:layout_height="50dp"
-                android:id="@+id/femaleButton"/>
-        </RadioGroup>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="250dp"

@@ -7,6 +7,8 @@ import edu.byu.cs.tweeter.net.response.StoryResponse;
 public class StoryService {
 
     private static StoryService instance;
+    private final ServerFacade serverFacade;
+
 
     public static StoryService getInstance() {
         if(instance == null) {
@@ -16,12 +18,11 @@ public class StoryService {
         return instance;
     }
 
-    private StoryService() {}
+    private StoryService() { serverFacade = ServerFacade.getInstance(); }
 
     public StoryResponse getStory(StoryRequest storyRequest){
         // TODO: Communicate with server and return data given.
-        ServerFacade server = new ServerFacade();
-        StoryResponse signUpResponse = server.getStory(storyRequest);
+        StoryResponse signUpResponse = serverFacade.getStory(storyRequest);
         return signUpResponse;
     }
 }

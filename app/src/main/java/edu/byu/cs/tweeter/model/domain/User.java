@@ -39,11 +39,10 @@ public class User implements Comparable<User> {
         return alias;
     }
 
-    public String getImageUrl() {
+    public String getImageUrl()
+    {
         return imageUrl;
     }
-
-
 
     @Override
     public boolean equals(Object o) {

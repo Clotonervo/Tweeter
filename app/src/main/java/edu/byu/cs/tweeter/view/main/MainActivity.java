@@ -92,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
             followButton.setVisibility(View.INVISIBLE);
         }
 
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                signOut();
+            }
+        });
+
         userImageView = findViewById(R.id.userImage);
 
 
@@ -122,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     }
 
     @Override
-    public void signOut(){
+    public void signOut()
+    {
         SignOutTask signOutTask = new SignOutTask(this, presenter);
         signOutTask.execute();
     }

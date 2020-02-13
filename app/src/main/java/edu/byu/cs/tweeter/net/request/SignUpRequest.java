@@ -1,19 +1,24 @@
 package edu.byu.cs.tweeter.net.request;
 
+import android.net.Uri;
+import android.util.Base64;
+
+import java.net.URI;
+
 public class SignUpRequest {
 
     private String username;
     private String password;
     private String firstName;
     private String lastName;
-    private String imageURL;
+    private String image;
 
-    public SignUpRequest(String username, String password, String firstName, String lastName, String imageURL){
+    public SignUpRequest(String username, String password, String firstName, String lastName, String image){
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.imageURL = imageURL;
+        this.image = image;
     }
 
     public String getUsername() {
@@ -48,11 +53,13 @@ public class SignUpRequest {
         this.lastName = fullName;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImage()
+    {
+        return image;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImage(String image)
+    {
+        this.image = image;
     }
 }

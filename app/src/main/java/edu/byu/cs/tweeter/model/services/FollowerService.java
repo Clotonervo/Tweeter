@@ -19,7 +19,7 @@ public class FollowerService {
     }
 
     private FollowerService() {
-        serverFacade = new ServerFacade();
+        serverFacade = ServerFacade.getInstance();
     }
 
     public FollowerResponse getFollowers(FollowerRequest request) {

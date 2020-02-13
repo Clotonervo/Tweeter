@@ -29,22 +29,38 @@ import edu.byu.cs.tweeter.net.response.UnfollowResponse;
 
 public class ServerFacade {
 
-    private static Map<User, List<User>> followeesByFollower;
-    private static Map<User, List<User>> followersByFollowees;
+    private static ServerFacade instance;
+    private static Map<User, List<User>> userFollowing;
+    private static Map<User, List<User>> userFollowers;
 
     private static List<Follow> follows;
+    private static User tweeterBot = new User("Tweeter", "Bot", "@TweeterBot","https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
 
     private static Map<User, List<Status>> userStatuses;
 
+    public static ServerFacade getInstance() {
+        if(instance == null) {
+            instance = new ServerFacade();
+        }
+
+        return instance;
+    }
+
+    private ServerFacade(){
+        intializeFollowData();
+        initializeStatuses();
+    }
+
+
+    /*
+             --------------------- Get Followers
+
+  */
     public FollowerResponse getFollowers(FollowerRequest request){
         assert request.getLimit() >= 0;
         assert request.getFollower() != null;
 
-        if(followersByFollowees == null) {
-            initializeFollowers();
-        }
-
-        List<User> allFollowers = followersByFollowees.get(request.getFollower());
+        List<User> allFollowers = userFollowers.get(request.getFollower());
         List<User> responseFollowers = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -64,18 +80,18 @@ public class ServerFacade {
         return new FollowerResponse(responseFollowers, hasMorePages);
     }
 
+    /*
+                 --------------------- get Following
 
-    public FollowingResponse getFollowees(FollowingRequest request) {
+      */
+    public FollowingResponse getFollowing(FollowingRequest request) {
 
         assert request.getLimit() >= 0;
         assert request.getFollower() != null;
 
-        if(followeesByFollower == null) {
-            followeesByFollower = initializeFollowees();
-        }
-        System.out.print(followeesByFollower);
+        System.out.print(userFollowing);
 
-        List<User> allFollowees = followeesByFollower.get(request.getFollower());
+        List<User> allFollowees = userFollowing.get(request.getFollower());
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
@@ -95,6 +111,11 @@ public class ServerFacade {
         return new FollowingResponse(responseFollowees, hasMorePages);
     }
 
+
+    /*
+                 --------------------- get following starting index
+
+      */
     private int getFolloweesStartingIndex(User lastFollowee, List<User> allFollowees) {
 
         int followeesIndex = 0;
@@ -114,52 +135,50 @@ public class ServerFacade {
         return followeesIndex;
     }
 
+       /*
+                --------------------- Generates follow data
+
+     */
     /**
      * Generates the followee data.
      */
-    private Map<User, List<User>> initializeFollowees() {
+    private void intializeFollowData() {
 
-        Map<User, List<User>> followeesByFollower = new HashMap<>();
+        userFollowing = new HashMap<>();
 
         follows = getFollowGenerator().generateUsersAndFollows(100,
                 0, 50, FollowGenerator.Sort.FOLLOWER_FOLLOWEE);
 
         // Populate a map of followees, keyed by follower so we can easily handle followee requests
         for(Follow follow : follows) {
-            List<User> followees = followeesByFollower.get(follow.getFollower());
+            List<User> followees = userFollowing.get(follow.getFollower());
 
             if(followees == null) {
                 followees = new ArrayList<>();
-                followeesByFollower.put(follow.getFollower(), followees);
+                userFollowing.put(follow.getFollower(), followees);
             }
 
             followees.add(follow.getFollowee());
         }
 
-        followersByFollowees = new HashMap<>();
+        userFollowers = new HashMap<>();
 
+        // Now do the same for a map of followers, keyed by followee to handle follower requests
         for(Follow follow : follows) {
-            List<User> followers = followersByFollowees.get(follow.getFollowee());
+            List<User> followers = userFollowers.get(follow.getFollowee());
 
             if(followers == null) {
                 followers = new ArrayList<>();
-                followersByFollowees.put(follow.getFollowee(), followers);
+                userFollowers.put(follow.getFollowee(), followers);
             }
 
             followers.add(follow.getFollower());
         }
 
+        userFollowing.put(tweeterBot, new ArrayList<User>());
+        userFollowers.put(tweeterBot, new ArrayList<User>());
 
-        return followeesByFollower;
-    }
-
-
-    private Map<User, List<User>> initializeFollowers() {
-
-
-        initializeFollowees();
-
-        return followersByFollowees;
+        return;
     }
 
     /**
@@ -185,15 +204,15 @@ public class ServerFacade {
         }
     }
 
-    private Map<User, List<Status>> initializeStatuses() {
+    /*
+             --------------------- Initialize Statuses
 
-        if(followeesByFollower == null){
-            followeesByFollower = initializeFollowees();
-        }
+  */
+    private Map<User, List<Status>> initializeStatuses() {
 
         userStatuses = new HashMap<>();
 
-        for (Map.Entry<User, List<User>> entry : followeesByFollower.entrySet()) {
+        for (Map.Entry<User, List<User>> entry : userFollowing.entrySet()) {
             User currentUser = entry.getKey();
             List<Status> statusList = new ArrayList<>();
             for(int i = 1; i < 5; i++){
@@ -202,48 +221,69 @@ public class ServerFacade {
             userStatuses.put(currentUser, statusList);
         }
 
+        userStatuses.put(tweeterBot, new ArrayList<Status>());
+
         return userStatuses;
     }
 
+    /*
+                --------------------- Sign Up User
 
-    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
+     */
+    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){                 //TODO: Give him people to follow and stuff?
         User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
-                signUpRequest.getImageURL());
+                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
         LoginService.getInstance().setCurrentUser(signedUpUser);
         LoginService.getInstance().setLoggedInUser(signedUpUser);
+        List<User> newUserFollowees = new ArrayList<>();
+        List<User> newUserFollowers = new ArrayList<>();
+
+
+        newUserFollowees.add(tweeterBot);           //Two different arrays because if one gets altered the other would too
+        newUserFollowers.add(tweeterBot);
+
+
+        userFollowing.put(signedUpUser,newUserFollowees);           //Have new user follow tweeterbot
+        userFollowing.get(tweeterBot).add(signedUpUser);
+
+        userFollowers.get(tweeterBot).add(signedUpUser);            //Have tweeterBot follow new person
+        userFollowers.put(signedUpUser, newUserFollowers);
+
+        userStatuses.get(tweeterBot).add(new Status(tweeterBot,"Welcome to Tweeter!"));
+        List<Status> newStatusList = new ArrayList<>();
+        newStatusList.add(new Status(signedUpUser, "My first Status! Hi everybody!"));
+        userStatuses.put(signedUpUser, newStatusList);
+
 
         return new SignUpResponse("Signed up successfully!", false);
     }
 
+    /*
+             --------------------- Get Story
+
+  */
     public StoryResponse getStory(StoryRequest storyRequest){
         User user = storyRequest.getUser();
 
-        if(userStatuses == null){
-            userStatuses = initializeStatuses();
-        }
-        List<Status> statusList = new ArrayList<>();
-
-        statusList = userStatuses.get(user);
+        List<Status> statusList = userStatuses.get(user);
 
 
         return new StoryResponse("Good stuff", statusList, false, true);
     }
 
-    public FeedResponse getFeed(FeedRequest feedRequest){
+    /*
+             --------------------- Get Feed
+
+  */
+    public FeedResponse getFeed(FeedRequest feedRequest){           //TODO: Make sure that feed is based on the time of a status/follow
         User user = feedRequest.getUser();
         boolean hasMorePages = true;
 
-        if(userStatuses == null){
-            userStatuses = initializeStatuses();
-        }
-
         List<Status> statusList = new ArrayList<>();
-        List<User> following = new ArrayList<>();
 
-        following = followeesByFollower.get(user);
+        List<User> following = userFollowing.get(user);
 
         for (int i = 0; i < following.size(); i++){
-//            List<Status> temp = userStatuses.get(following.get(i));
             statusList.addAll(userStatuses.get(following.get(i)));
 
         }
@@ -260,12 +300,12 @@ public class ServerFacade {
     }
 
 
+    /*
+             --------------------- Post Status
+
+  */
     public PostResponse post(Status postedStatus){
         User user = postedStatus.getUser();
-
-        if(userStatuses == null){
-            userStatuses = initializeStatuses();
-        }
 
         List<Status> temp = userStatuses.get(user);
 
@@ -277,30 +317,37 @@ public class ServerFacade {
             }
         });
 
-        temp = userStatuses.get(user);
-
         return new PostResponse(true, "Everything smooth");
     }
 
+
+    /*
+                 --------------------- Get user from Alias
+
+      */
     public User aliasToUser(String alias){
-        for (Map.Entry<User, List<User>> entry : followeesByFollower.entrySet()) {
+        for (Map.Entry<User, List<User>> entry : userFollowing.entrySet()) {
             if(entry.getKey().getAlias() == alias){
                 return entry.getKey();
             }
         }
-        return new User("null", "null", "null");
+        return new User("null", "null", null);
     }
 
+    /*
+             --------------------- isFollowing
+
+  */
     public boolean isFollowing(Follow follow){
-        return followeesByFollower.get(follow.getFollower()).contains(follow.getFollowee());
+        return userFollowing.get(follow.getFollower()).contains(follow.getFollowee());
     }
 
-    public FollowResponse followUser(Follow follow){                //Should I resort the list alphabetically?
-        if(followeesByFollower == null){
-            followeesByFollower = initializeFollowees();
-        }
+    /*
+             --------------------- followUser
 
-        if (followeesByFollower.get(follow.getFollower()).add(follow.getFollowee())){
+  */
+    public FollowResponse followUser(Follow follow){                //Should I resort the list alphabetically?
+        if (userFollowing.get(follow.getFollower()).add(follow.getFollowee())){
             return new FollowResponse(true, "User successfully followed");
         }
         else{
@@ -308,12 +355,15 @@ public class ServerFacade {
         }
     }
 
-    public UnfollowResponse unfollowUser(Follow follow){
-        if(followeesByFollower == null){
-            followeesByFollower = initializeFollowees();
-        }
 
-        if (followeesByFollower.get(follow.getFollower()).remove(follow.getFollowee())){
+    /*
+             --------------------- unfollowUser
+
+  */
+    public UnfollowResponse unfollowUser(Follow follow){
+
+        if (userFollowing.get(follow.getFollower()).remove(follow.getFollowee())
+            && userFollowers.get(follow.getFollowee()).remove(follow.getFollower())){
             return new UnfollowResponse(true, "User successfully unfollowed");
         }
         else{

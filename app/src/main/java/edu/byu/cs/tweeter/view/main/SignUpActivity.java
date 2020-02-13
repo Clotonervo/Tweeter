@@ -1,11 +1,22 @@
 package edu.byu.cs.tweeter.view.main;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.net.request.SignUpRequest;
@@ -20,7 +31,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
     private EditText mPassword;
     private EditText mFirstName;
     private EditText mLastName;
-    private EditText mImage;
+    private ImageView mImage;
+    private Button mUploadButton;
+    private String imageToUpload;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +45,17 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
         mPassword = this.findViewById(R.id.passwordInput);
         mFirstName = this.findViewById(R.id.firstNameInput);
         mLastName = this.findViewById(R.id.lastNameInput);
-        mImage = this.findViewById(R.id.emailInput);
+        mUploadButton = this.findViewById(R.id.uploadButton);
+        mImage = this.findViewById(R.id.imageView);
+
+        mUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, 0);
+            }
+        });
 
     }
 
@@ -43,12 +66,39 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
                 mPassword.getText().toString(),
                 mFirstName.getText().toString(),
                 mLastName.getText().toString(),
-                "https://i.pinimg.com/236x/ed/c7/5e/edc75e41888082aa8323c725540624f5.jpg");
+                imageToUpload);
         signUpTask.execute(signUpRequest);
-
-
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && data != null){
+            final Uri imageUri = data.getData();
+            mImage.setImageURI(imageUri);
+            try {
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                imageToUpload = encodeImage(selectedImage);
+            }
+            catch(Exception x){
+                System.err.print("Something went wrong while uploading photo:");
+                x.printStackTrace();
+            }
+        }
+    }
+
+    private String encodeImage(Bitmap bm)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return encImage;
+    }
 
     @Override
     public void onExecuteComplete(String message, Boolean error){
@@ -62,4 +112,6 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
             startActivity(intent);
         }
     }
+
+
 }

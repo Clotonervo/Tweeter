@@ -8,6 +8,7 @@ import edu.byu.cs.tweeter.net.response.LoginResponse;
 public class LoginService {
 
     private static LoginService instance;
+    private final ServerFacade serverFacade;
     private User currentUser;
     private User loggedInUser;
 
@@ -19,7 +20,7 @@ public class LoginService {
         return instance;
     }
 
-    private LoginService() {}
+    private LoginService() {serverFacade = ServerFacade.getInstance();}
 
     public User getCurrentUser() {
         return currentUser;
@@ -39,8 +40,7 @@ public class LoginService {
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
         // TODO: Communicate with server and return data given.
-        ServerFacade server = new ServerFacade();
-        LoginResponse loginResponse = server.authenticateUser(loginRequest);
+        LoginResponse loginResponse = serverFacade.authenticateUser(loginRequest);
         if (loginResponse.isError()){
             return loginResponse;
         }
@@ -54,7 +54,6 @@ public class LoginService {
     }
 
     public User aliasToUser(String alias){
-        ServerFacade serverFacade = new ServerFacade();
         return serverFacade.aliasToUser(alias);
     }
 }
