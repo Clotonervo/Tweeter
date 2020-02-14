@@ -22,7 +22,6 @@ public class SignUpService {
     private SignUpService() {serverFacade = ServerFacade.getInstance();}
 
     public SignUpResponse authenticateUser(SignUpRequest signUpRequest){
-        // TODO: Communicate with server and return data given.
         SignUpResponse signUpResponse = serverFacade.registerNewUser(signUpRequest);
         return signUpResponse;
     }

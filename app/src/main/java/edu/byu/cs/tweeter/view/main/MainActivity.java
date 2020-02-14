@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         if(user != presenter.getLoggedInUser()){
             fab.hide();
             signOutButton.setVisibility(View.INVISIBLE);
-            if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){        //TODO: Debug this if statement and make sure its doing what it should
+            if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){
                 System.out.print("Logged in user is following current user");
                 followButton.setText(R.string.unfollow_button);
             }
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
-        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());        //TODO: Also maybe factor this into its own class
+        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

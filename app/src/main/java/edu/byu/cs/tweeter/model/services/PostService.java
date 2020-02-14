@@ -21,7 +21,6 @@ public class PostService {
     private PostService() {serverFacade = ServerFacade.getInstance();}
 
     public PostResponse postStatus(String postedStatus){
-        // TODO: Communicate with server and return data given.
         Status status = new Status(LoginService.getInstance().getCurrentUser(), postedStatus);
         PostResponse postResponse = serverFacade.post(status);
         return postResponse;

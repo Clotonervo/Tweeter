@@ -39,7 +39,6 @@ public class LoginService {
     }
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
-        // TODO: Communicate with server and return data given.
         LoginResponse loginResponse = serverFacade.authenticateUser(loginRequest);
         if (loginResponse.isError()){
             return loginResponse;

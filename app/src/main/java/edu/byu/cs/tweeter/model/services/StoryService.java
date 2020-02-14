@@ -21,7 +21,6 @@ public class StoryService {
     private StoryService() { serverFacade = ServerFacade.getInstance(); }
 
     public StoryResponse getStory(StoryRequest storyRequest){
-        // TODO: Communicate with server and return data given.
         StoryResponse signUpResponse = serverFacade.getStory(storyRequest);
         return signUpResponse;
     }

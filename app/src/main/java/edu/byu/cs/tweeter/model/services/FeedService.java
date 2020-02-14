@@ -21,7 +21,6 @@ public class FeedService {
     private FeedService() { serverFacade = ServerFacade.getInstance(); }
 
     public FeedResponse getFeed(FeedRequest feedRequest) {
-        // TODO: Communicate with server and return data given.
         ServerFacade server = ServerFacade.getInstance();
         FeedResponse feedResponse = server.getFeed(feedRequest);
         return feedResponse;

@@ -230,7 +230,7 @@ public class ServerFacade {
                 --------------------- Sign Up User
 
      */
-    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){                 //TODO: Give him people to follow and stuff?
+    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
         User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
                 "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
         LoginService.getInstance().setCurrentUser(signedUpUser);
@@ -265,10 +265,48 @@ public class ServerFacade {
     public StoryResponse getStory(StoryRequest storyRequest){
         User user = storyRequest.getUser();
 
+        assert storyRequest.getLimit() >= 0;        //Error check this
+        assert storyRequest.getUser() != null;
+
+
+        boolean hasMorePages = false;
+
         List<Status> statusList = userStatuses.get(user);
+        List<Status> responseStatuses = new ArrayList<>();
+
+        if(storyRequest.getLimit() > 0) {
+            if (statusList != null) {
+                int storyIndex = getStoryStartingIndex(storyRequest.getLastStatus(), statusList);
+
+                for(int limitCounter = 0; storyIndex < statusList.size() && limitCounter < storyRequest.getLimit(); storyIndex++, limitCounter++) {
+                    responseStatuses.add(statusList.get(storyIndex));
+                }
+
+                hasMorePages = storyIndex < statusList.size();
+            }
+        }
 
 
-        return new StoryResponse("Good stuff", statusList, false, true);
+        return new StoryResponse("Good stuff", responseStatuses, hasMorePages, true);
+    }
+
+    private int getStoryStartingIndex(Status lastStatus, List<Status> allStatuses) {
+
+        int statusIndex = 0;
+
+        if(lastStatus != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allStatuses.size(); i++) {
+                if(lastStatus.equals(allStatuses.get(i))) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    statusIndex = i + 1;
+                }
+            }
+        }
+
+        return statusIndex;
     }
 
     /*
@@ -276,7 +314,7 @@ public class ServerFacade {
 
   */
     public FeedResponse getFeed(FeedRequest feedRequest){           //TODO: Make sure that feed is based on the time of a status/follow
-        User user = feedRequest.getUser();
+        User user = feedRequest.getUser();                          //TODO: Also make sure that only the number of status is being given back, not all of them.
         boolean hasMorePages = true;
 
         List<Status> statusList = new ArrayList<>();
@@ -327,11 +365,11 @@ public class ServerFacade {
       */
     public User aliasToUser(String alias){
         for (Map.Entry<User, List<User>> entry : userFollowing.entrySet()) {
-            if(entry.getKey().getAlias() == alias){
+            if(entry.getKey().getAlias().equals(alias)){
                 return entry.getKey();
             }
         }
-        return new User("null", "null", null);
+        return null;
     }
 
     /*
