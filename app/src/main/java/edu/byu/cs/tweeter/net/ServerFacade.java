@@ -314,17 +314,36 @@ public class ServerFacade {
 
   */
     public FeedResponse getFeed(FeedRequest feedRequest){           //TODO: Make sure that feed is based on the time of a status/follow
-        User user = feedRequest.getUser();                          //TODO: Also make sure that only the number of status is being given back, not all of them.
-        boolean hasMorePages = true;
+        User user = feedRequest.getUser();
+
+        assert feedRequest.getLimit() >= 0;
+        assert feedRequest.getUser() != null;
+
+        boolean hasMorePages = false;
 
         List<Status> statusList = new ArrayList<>();
-
         List<User> following = userFollowing.get(user);
 
         for (int i = 0; i < following.size(); i++){
             statusList.addAll(userStatuses.get(following.get(i)));
 
         }
+
+        List<Status> feedResponse = new ArrayList<>();
+
+
+        if(feedRequest.getLimit() > 0) {
+            if (statusList != null) {
+                int storyIndex = getFeedStartingIndex(feedRequest.getLastStatus(), statusList);
+
+                for(int limitCounter = 0; storyIndex < statusList.size() && limitCounter < feedRequest.getLimit(); storyIndex++, limitCounter++) {
+                    feedResponse.add(statusList.get(storyIndex));
+                }
+
+                hasMorePages = storyIndex < statusList.size();
+            }
+        }
+
 
         Collections.sort(statusList, new Comparator<Status>() {
             public int compare(Status o1, Status o2) {
@@ -333,8 +352,28 @@ public class ServerFacade {
         });
 
 
-        return new FeedResponse(true, "No Error", hasMorePages, statusList, following);
+        return new FeedResponse(true, "No Error", hasMorePages, feedResponse, following);
 
+    }
+
+
+    private int getFeedStartingIndex(Status lastStatus, List<Status> allStatuses) {
+
+        int statusIndex = 0;
+
+        if(lastStatus != null) {
+            // This is a paged request for something after the first page. Find the first item
+            // we should return
+            for (int i = 0; i < allStatuses.size(); i++) {
+                if(lastStatus.equals(allStatuses.get(i))) {
+                    // We found the index of the last item returned last time. Increment to get
+                    // to the first one we should return
+                    statusIndex = i + 1;
+                }
+            }
+        }
+
+        return statusIndex;
     }
 
 
