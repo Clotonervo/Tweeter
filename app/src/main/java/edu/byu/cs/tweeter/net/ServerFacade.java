@@ -1,9 +1,12 @@
 package edu.byu.cs.tweeter.net;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +40,8 @@ public class ServerFacade {
     private static User tweeterBot = new User("Tweeter", "Bot", "@TweeterBot","https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
 
     private static Map<User, List<Status>> userStatuses;
+    private static Map<User, List<Status>> userFeeds;
+    private static List<User> allUsers;
 
     public static ServerFacade getInstance() {
         if(instance == null) {
@@ -49,6 +54,10 @@ public class ServerFacade {
     private ServerFacade(){
         intializeFollowData();
         initializeStatuses();
+        initializeFeeds();
+        allUsers = new ArrayList<>();
+        allUsers.add(new User("Test", "User",
+                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"));
     }
 
 
@@ -193,15 +202,24 @@ public class ServerFacade {
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
 
-        if(!loginRequest.getUsername().equals("Test")){
-            return new LoginResponse("Invalid Username", true);
+        for(int i = 0; i < allUsers.size(); i++){
+            if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
+            && (loginRequest.getPassword().equals("password")
+            || loginRequest.getPassword().equals("x"))){
+                return new LoginResponse("Login successful!", false);
+            }
         }
-        else if (!loginRequest.getPassword().equals("password")){
-            return new LoginResponse("Invalid Password", true);
-        }
-        else {
-            return new LoginResponse("Login successful!", false);
-        }
+        return new LoginResponse("Invalid credentials", true);
+
+//        if(!loginRequest.getUsername().equals("Test")){
+//            return new LoginResponse("Invalid Username", true);
+//        }
+//        else if (!loginRequest.getPassword().equals("password")){
+//            return new LoginResponse("Invalid Password", true);
+//        }
+//        else {
+//            return new LoginResponse("Login successful!", false);
+//        }
     }
 
     /*
@@ -226,12 +244,32 @@ public class ServerFacade {
         return userStatuses;
     }
 
+        /*
+             --------------------- Initialize User Feeds
+
+  */
+    private Map<User, List<Status>> initializeFeeds(){
+
+        userFeeds = new HashMap<>();
+
+        for (Map.Entry<User, List<User>> entry : userFollowing.entrySet()) {
+            User currentUser = entry.getKey();
+            List<Status> statusList = new ArrayList<>();
+            for (User following: entry.getValue()) {
+                statusList.addAll(userStatuses.get(following));
+            }
+            userFeeds.put(currentUser, statusList);
+        }
+
+        return userFeeds;
+    }
+
     /*
                 --------------------- Sign Up User
 
      */
     public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
-        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
+        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(),
                 "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
         LoginService.getInstance().setCurrentUser(signedUpUser);
         LoginService.getInstance().setLoggedInUser(signedUpUser);
@@ -249,10 +287,18 @@ public class ServerFacade {
         userFollowers.get(tweeterBot).add(signedUpUser);            //Have tweeterBot follow new person
         userFollowers.put(signedUpUser, newUserFollowers);
 
-        userStatuses.get(tweeterBot).add(new Status(tweeterBot,"Welcome to Tweeter!"));
+        Status status = new Status(tweeterBot,"Welcome to Tweeter!");
+        List<Status> currentFeed = new ArrayList<>();
+        currentFeed.add(status);
+
+        userStatuses.get(tweeterBot).add(status);
+        userFeeds.put(signedUpUser, currentFeed);
+
         List<Status> newStatusList = new ArrayList<>();
         newStatusList.add(new Status(signedUpUser, "My first Status! Hi everybody!"));
         userStatuses.put(signedUpUser, newStatusList);
+
+        allUsers.add(signedUpUser);
 
 
         return new SignUpResponse("Signed up successfully!", false);
@@ -313,7 +359,7 @@ public class ServerFacade {
              --------------------- Get Feed
 
   */
-    public FeedResponse getFeed(FeedRequest feedRequest){           //TODO: Make sure that feed is based on the time of a status/follow
+    public FeedResponse getFeed(FeedRequest feedRequest){           
         User user = feedRequest.getUser();
 
         assert feedRequest.getLimit() >= 0;
@@ -321,16 +367,10 @@ public class ServerFacade {
 
         boolean hasMorePages = false;
 
-        List<Status> statusList = new ArrayList<>();
+        List<Status> statusList = userFeeds.get(user);
         List<User> following = userFollowing.get(user);
 
-        for (int i = 0; i < following.size(); i++){
-            statusList.addAll(userStatuses.get(following.get(i)));
-
-        }
-
         List<Status> feedResponse = new ArrayList<>();
-
 
         if(feedRequest.getLimit() > 0) {
             if (statusList != null) {
@@ -345,9 +385,9 @@ public class ServerFacade {
         }
 
 
-        Collections.sort(statusList, new Comparator<Status>() {
+        Collections.sort(feedResponse, new Comparator<Status>() {
             public int compare(Status o1, Status o2) {
-                return o1.getTimeStamp().compareTo(o2.getTimeStamp());
+                return o2.getTimeStamp().compareTo(o1.getTimeStamp());
             }
         });
 
@@ -384,8 +424,6 @@ public class ServerFacade {
     public PostResponse post(Status postedStatus){
         User user = postedStatus.getUser();
 
-        List<Status> temp = userStatuses.get(user);
-
         userStatuses.get(user).add(postedStatus);
 
         Collections.sort(userStatuses.get(user), new Comparator<Status>() {
@@ -393,6 +431,16 @@ public class ServerFacade {
                 return o2.getTimeStamp().compareTo(o1.getTimeStamp());
             }
         });
+
+
+        //Add that status to every follower's feed
+        List<User> followers = userFollowers.get(user);
+
+        for(int i = 0; i < followers.size(); i++){
+            userFeeds.get(followers.get(i)).add(postedStatus);
+
+        }
+
 
         return new PostResponse(true, "Everything smooth");
     }
@@ -424,7 +472,8 @@ public class ServerFacade {
 
   */
     public FollowResponse followUser(Follow follow){                //Should I resort the list alphabetically?
-        if (userFollowing.get(follow.getFollower()).add(follow.getFollowee())){
+        if (userFollowing.get(follow.getFollower()).add(follow.getFollowee())
+                && userFollowers.get(follow.getFollowee()).add(follow.getFollower())){
             return new FollowResponse(true, "User successfully followed");
         }
         else{
@@ -441,6 +490,23 @@ public class ServerFacade {
 
         if (userFollowing.get(follow.getFollower()).remove(follow.getFollowee())
             && userFollowers.get(follow.getFollowee()).remove(follow.getFollower())){
+
+            List<Status> statusList = new ArrayList<>(userFeeds.get(follow.getFollower()));
+
+            Iterator<Status> itr = statusList.iterator();
+
+            while (itr.hasNext()) {
+                Status status = itr.next();
+
+                if (status.getUser() == follow.getFollowee()) {
+                    itr.remove();
+                }
+            }
+
+
+            userFeeds.remove(follow.getFollower());
+            userFeeds.put(follow.getFollower(), statusList);
+
             return new UnfollowResponse(true, "User successfully unfollowed");
         }
         else{

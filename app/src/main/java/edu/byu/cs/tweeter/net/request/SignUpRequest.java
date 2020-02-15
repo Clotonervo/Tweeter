@@ -19,6 +19,9 @@ public class SignUpRequest {
         this.firstName = firstName;
         this.lastName = lastName;
         this.image = image;
+        if (image == null){
+            this.image = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+        }
     }
 
     public String getUsername() {
