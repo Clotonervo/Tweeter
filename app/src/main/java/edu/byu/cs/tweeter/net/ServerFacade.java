@@ -206,20 +206,11 @@ public class ServerFacade {
             if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
             && (loginRequest.getPassword().equals("password")
             || loginRequest.getPassword().equals("x"))){
-                return new LoginResponse("Login successful!", false);
+                return new LoginResponse("Login successful!", false, allUsers.get(i));
             }
         }
         return new LoginResponse("Invalid credentials", true);
 
-//        if(!loginRequest.getUsername().equals("Test")){
-//            return new LoginResponse("Invalid Username", true);
-//        }
-//        else if (!loginRequest.getPassword().equals("password")){
-//            return new LoginResponse("Invalid Password", true);
-//        }
-//        else {
-//            return new LoginResponse("Login successful!", false);
-//        }
     }
 
     /*
@@ -269,7 +260,7 @@ public class ServerFacade {
 
      */
     public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
-        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(),
+        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
                 "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
         LoginService.getInstance().setCurrentUser(signedUpUser);
         LoginService.getInstance().setLoggedInUser(signedUpUser);
@@ -359,7 +350,7 @@ public class ServerFacade {
              --------------------- Get Feed
 
   */
-    public FeedResponse getFeed(FeedRequest feedRequest){           
+    public FeedResponse getFeed(FeedRequest feedRequest){
         User user = feedRequest.getUser();
 
         assert feedRequest.getLimit() >= 0;

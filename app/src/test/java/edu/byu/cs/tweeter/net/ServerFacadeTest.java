@@ -57,7 +57,7 @@ class ServerFacadeTest {
 
     @BeforeEach
     void setup() {
-        serverFacadeSpy = Mockito.spy(new ServerFacade());
+        serverFacadeSpy = Mockito.spy(ServerFacade.getInstance());
 
         FollowGenerator mockFollowGenerator = Mockito.mock(FollowGenerator.class);
         Mockito.when(mockFollowGenerator.generateUsersAndFollows(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), (FollowGenerator.Sort) Mockito.any())).thenReturn(follows);

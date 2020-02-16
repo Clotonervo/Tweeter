@@ -43,16 +43,8 @@ public class LoginService {
         if (loginResponse.isError()){
             return loginResponse;
         }
-        else if(loginRequest.getUsername().equals("@xx")){
-            currentUser = new User("x", "x",
-                    "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
-            setCurrentUser(currentUser);
-            setLoggedInUser(currentUser);
-            return loginResponse;
-        }
         else {
-            currentUser = new User("Test", "User",
-                    "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
+            currentUser = loginResponse.getUser();
             setCurrentUser(currentUser);
             setLoggedInUser(currentUser);
             return loginResponse;
