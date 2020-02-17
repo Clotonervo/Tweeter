@@ -25,7 +25,6 @@ import edu.byu.cs.tweeter.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.presenter.FollowerPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.GetFollowerTask;
-import edu.byu.cs.tweeter.view.asyncTasks.GetFollowingTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
 import edu.byu.cs.tweeter.view.main.MainActivity;
 
@@ -168,7 +167,7 @@ public class FollowerFragment extends Fragment implements FollowerPresenter.View
 
         @Override
         public void followersRetrieved(FollowerResponse followingResponse) {
-            List<User> followers = followingResponse.getFollowees();
+            List<User> followers = followingResponse.getFollowers();
 
             lastFollower = (followers.size() > 0) ? followers.get(followers.size() -1) : null;
             hasMorePages = followingResponse.hasMorePages();

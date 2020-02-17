@@ -84,6 +84,7 @@ public class Status {
                 int j = 0;
                 int startIndex = messageCopy.indexOf("www");
                 messageCopy.substring(startIndex);
+                j = startIndex;
                 char[] temp = messageCopy.toCharArray();
 
 

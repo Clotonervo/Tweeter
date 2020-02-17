@@ -43,6 +43,10 @@ public class ServerFacade {
     private static Map<User, List<Status>> userFeeds;
     private static List<User> allUsers;
 
+
+    /*
+        Constructors
+     */
     public static ServerFacade getInstance() {
         if(instance == null) {
             instance = new ServerFacade();
@@ -200,7 +204,7 @@ public class ServerFacade {
         return FollowGenerator.getInstance();
     }
 
-    public LoginResponse authenticateUser(LoginRequest loginRequest){
+    public LoginResponse authenticateUser(LoginRequest loginRequest){                   //When backend is up, authenticate password with username there
 
         for(int i = 0; i < allUsers.size(); i++){
             if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
@@ -217,7 +221,7 @@ public class ServerFacade {
              --------------------- Initialize Statuses
 
   */
-    private Map<User, List<Status>> initializeStatuses() {
+    private void initializeStatuses() {
 
         userStatuses = new HashMap<>();
 
@@ -232,14 +236,13 @@ public class ServerFacade {
 
         userStatuses.put(tweeterBot, new ArrayList<Status>());
 
-        return userStatuses;
     }
 
         /*
              --------------------- Initialize User Feeds
 
   */
-    private Map<User, List<Status>> initializeFeeds(){
+    private void initializeFeeds(){
 
         userFeeds = new HashMap<>();
 
@@ -251,8 +254,6 @@ public class ServerFacade {
             }
             userFeeds.put(currentUser, statusList);
         }
-
-        return userFeeds;
     }
 
     /*
@@ -260,8 +261,22 @@ public class ServerFacade {
 
      */
     public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
+
+        if(signUpRequest.getFirstName() == null || signUpRequest.getLastName() == null
+                || signUpRequest.getPassword() == null || signUpRequest.getUsername() == null){
+            return new SignUpResponse("Not all forms filled out!", true);
+        }
+
+
         User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
                 "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
+
+        for (User user: allUsers) {
+            if(user.getAlias().equals(signedUpUser.getAlias())){
+                return new SignUpResponse("Username already exists!", true);
+            }
+        }
+
         LoginService.getInstance().setCurrentUser(signedUpUser);
         LoginService.getInstance().setLoggedInUser(signedUpUser);
         List<User> newUserFollowees = new ArrayList<>();
@@ -381,6 +396,8 @@ public class ServerFacade {
                 return o2.getTimeStamp().compareTo(o1.getTimeStamp());
             }
         });
+
+
 
 
         return new FeedResponse(true, "No Error", hasMorePages, feedResponse, following);
@@ -504,4 +521,75 @@ public class ServerFacade {
             return new UnfollowResponse(false, "Something went wrong unfollowing user");
         }
     }
+
+
+    /*
+    Getters and setter for testing
+ */
+    public static void setInstance(ServerFacade instance)
+    {
+        ServerFacade.instance = instance;
+    }
+
+    public static Map<User, List<User>> getUserFollowing()
+    {
+        return userFollowing;
+    }
+
+    public static void setUserFollowing(Map<User, List<User>> userFollowing)
+    {
+        ServerFacade.userFollowing = userFollowing;
+    }
+
+    public static Map<User, List<User>> getUserFollowers()
+    {
+        return userFollowers;
+    }
+
+    public static void setUserFollowers(Map<User, List<User>> userFollowers)
+    {
+        ServerFacade.userFollowers = userFollowers;
+    }
+
+    public static List<Follow> getFollows()
+    {
+        return follows;
+    }
+
+    public static void setFollows(List<Follow> follows)
+    {
+        ServerFacade.follows = follows;
+    }
+
+    public static Map<User, List<Status>> getUserStatuses()
+    {
+        return userStatuses;
+    }
+
+    public static void setUserStatuses(Map<User, List<Status>> userStatuses)
+    {
+        ServerFacade.userStatuses = userStatuses;
+    }
+
+    public static Map<User, List<Status>> getUserFeeds()
+    {
+        return userFeeds;
+    }
+
+    public static void setUserFeeds(Map<User, List<Status>> userFeeds)
+    {
+        ServerFacade.userFeeds = userFeeds;
+    }
+
+    public static List<User> getAllUsers()
+    {
+        return allUsers;
+    }
+
+    public static void setAllUsers(List<User> allUsers)
+    {
+        ServerFacade.allUsers = allUsers;
+    }
+
+
 }

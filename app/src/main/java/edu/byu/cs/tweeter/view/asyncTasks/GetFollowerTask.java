@@ -35,7 +35,7 @@ public class GetFollowerTask extends AsyncTask<FollowerRequest, Void, FollowerRe
     }
 
     private void loadImages(FollowerResponse response) {
-        for(User user : response.getFollowees()) {
+        for(User user : response.getFollowers()) {
 
             Drawable drawable;
 

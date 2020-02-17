@@ -60,7 +60,7 @@ public class LoginInTests {
 
     @Test
     void testLoginUserThatJustSignedUp(){
-        SignUpRequest signUpRequest = new SignUpRequest("Username", "password", "Test", "Me", null);
+        SignUpRequest signUpRequest = new SignUpRequest("Username5", "password", "Test", "Me", null);
         SignUpResponse signUpResponse = SignUpService.getInstance().authenticateUser(signUpRequest);
 
         Assertions.assertFalse(signUpResponse.isError());
@@ -73,7 +73,7 @@ public class LoginInTests {
         loginService.setLoggedInUser(null);
         loginService.setCurrentUser(null);
 
-        request = new LoginRequest("@Username", "password");
+        request = new LoginRequest("@Username5", "password");
         response = loginService.authenticateUser(request);
 
         Assertions.assertFalse(response.isError());

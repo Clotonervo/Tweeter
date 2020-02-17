@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     @Override
     public void followUser(View v) {
         if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){
-            System.out.print("Logged in user is following current user");
             UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
             followButton.setText(R.string.follow_button);
             unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
@@ -153,7 +152,6 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
 
         }
         else {
-            System.out.print("Logged in user is NOT following current user");
             FollowUserTask followUserTask = new FollowUserTask(this, presenter);
             followButton.setText(R.string.unfollow_button);
             followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
