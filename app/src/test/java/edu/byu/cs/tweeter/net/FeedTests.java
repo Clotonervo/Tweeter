@@ -10,6 +10,7 @@ import java.util.Map;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.FeedService;
+import edu.byu.cs.tweeter.model.services.FollowerService;
 import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.model.services.PostService;
 import edu.byu.cs.tweeter.model.services.SignUpService;
@@ -54,12 +55,14 @@ public class FeedTests {
     void testAtSignUpEveryoneHasFeed(){
         SignUpRequest signUpRequest = new SignUpRequest("Username1", "password", "Test", "SignUP", null);
         SignUpResponse signUpResponse = SignUpService.getInstance().authenticateUser(signUpRequest);
-        User signedUpUser = ServerFacade.getInstance().aliasToUser("@Username1");
+        User signedUpUser = loginService.aliasToUser("@Username1");
 
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertFalse(signUpResponse.isError());
 
-        List<Status> statusList = ServerFacade.getInstance().getUserFeeds().get(signedUpUser);
+        FeedResponse feedResponse = FeedService.getInstance().getFeed(new FeedRequest(signedUpUser, 100000, null));
+        Assertions.assertTrue(feedResponse.isSuccess());
+        List<Status> statusList = feedResponse.getStatuses();
 
         Assertions.assertNotEquals(statusList.size(), 0);
 
@@ -76,10 +79,12 @@ public class FeedTests {
         PostResponse postResponse = PostService.getInstance().postStatus("Test Status2");
         Assertions.assertTrue(postResponse.isSuccess());
 
-        List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(loginService.getLoggedInUser(), 10000, null)).getFollowers();
+        List<User> followers = FollowerService.getInstance().getFollowers(new FollowerRequest(loginService.getLoggedInUser(), 10000, null)).getFollowers();
 
         for (User follower: followers) {
-            List<Status> feed = ServerFacade.getInstance().getFeed(new FeedRequest(follower, 100000, null)).getStatuses();
+            FeedResponse feedResponse = FeedService.getInstance().getFeed(new FeedRequest(follower, 100000, null));
+            Assertions.assertTrue(feedResponse.isSuccess());
+            List<Status> feed = feedResponse.getStatuses();
             Assertions.assertEquals(feed.get(0).getMessage(), "Test Status2");
         }
     }

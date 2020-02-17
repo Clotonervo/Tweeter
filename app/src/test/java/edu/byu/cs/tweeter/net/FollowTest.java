@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.services.FollowerService;
 import edu.byu.cs.tweeter.model.services.FollowingService;
 import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.model.services.SignUpService;
@@ -16,6 +17,7 @@ import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.net.response.FollowResponse;
 import edu.byu.cs.tweeter.net.response.FollowerResponse;
+import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
 
@@ -37,17 +39,22 @@ public class FollowTest {
         List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser(), 1000, null)).getFollowees();
 
         Assertions.assertEquals(following.size(), 1);
-        loginService.setCurrentUser(ServerFacade.getInstance().aliasToUser("@TestUser"));
+        loginService.setCurrentUser(LoginService.getInstance().aliasToUser("@TestUser"));
 
         response = service.followUser(new Follow(loginService.getLoggedInUser(), loginService.getCurrentUser()));
 
         Assertions.assertTrue(response.isSuccess());
-        following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser(), 1000, null)).getFollowees();
+
+        FollowingResponse followingResponse = service.getFollowees(new FollowingRequest(loginService.getLoggedInUser(), 1000, null));
+        Assertions.assertTrue(followingResponse.isSuccess());
+        following = followingResponse.getFollowees();
 
         Assertions.assertEquals(following.size(), 2);
         Assertions.assertEquals(following.get(1), loginService.getCurrentUser());
 
-        List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(loginService.getCurrentUser(), 1000, null)).getFollowers();
+        FollowerResponse followerResponse = FollowerService.getInstance().getFollowers(new FollowerRequest(loginService.getCurrentUser(), 1000, null));
+        Assertions.assertTrue(followerResponse.isSuccess());
+        List<User> followers = followerResponse.getFollowers();
 
         Assertions.assertTrue(followers.contains(loginService.getLoggedInUser()));
     }
