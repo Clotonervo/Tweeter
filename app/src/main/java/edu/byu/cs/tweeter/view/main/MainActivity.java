@@ -31,6 +31,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.response.SignOutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
+import edu.byu.cs.tweeter.presenter.SearchPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.FollowUserTask;
 import edu.byu.cs.tweeter.view.asyncTasks.LoadImageTask;
 import edu.byu.cs.tweeter.view.asyncTasks.PostTask;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     private ImageView userImageView;
     private Button signOutButton;
     private Button followButton;
+    private Button userSearch;
 
 
     @Override
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
 
         signOutButton = findViewById(R.id.signOutButton);
         followButton = findViewById(R.id.follow_toggle);
+        userSearch = findViewById(R.id.goUser);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         userImageView = findViewById(R.id.userImage);
 
 
+
         // Asynchronously load the user's image
         LoadImageTask loadImageTask = new LoadImageTask(this);
         loadImageTask.execute(presenter.getCurrentUser().getImageUrl());
@@ -127,6 +131,11 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         if(drawables[0] != null) {
             userImageView.setImageDrawable(drawables[0]);
         }
+    }
+
+    public void goUser(View v){
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
     }
 
     @Override
