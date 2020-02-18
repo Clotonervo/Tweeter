@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.net;
 
+import android.view.View;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +25,16 @@ import edu.byu.cs.tweeter.net.response.FeedResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
 import edu.byu.cs.tweeter.net.response.PostResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
+import edu.byu.cs.tweeter.presenter.FeedPresenter;
 
 public class FeedTests {
-    private FeedService service = FeedService.getInstance();
-    private FeedRequest request;
-    private FeedResponse response;
     private LoginService loginService = LoginService.getInstance();
+
+    public class ViewImplementation implements FeedPresenter.View {
+
+    }
+
+    private FeedPresenter presenter = new FeedPresenter(new ViewImplementation());
 
     @Test
     void testAtLoginEveryoneHasFeed(){
@@ -36,7 +42,7 @@ public class FeedTests {
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
         Assertions.assertFalse(loginResponse.isError());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), loginRequest.getUsername());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         Map<User, List<Status>> userFeeds = ServerFacade.getInstance().getUserFeeds();
 
@@ -55,12 +61,12 @@ public class FeedTests {
     void testAtSignUpEveryoneHasFeed(){
         SignUpRequest signUpRequest = new SignUpRequest("Username1", "password", "Test", "SignUP", null);
         SignUpResponse signUpResponse = SignUpService.getInstance().authenticateUser(signUpRequest);
-        User signedUpUser = loginService.aliasToUser("@Username1");
+        User signedUpUser = presenter.getUserByAlias("@Username1");
 
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertFalse(signUpResponse.isError());
 
-        FeedResponse feedResponse = FeedService.getInstance().getFeed(new FeedRequest(signedUpUser, 100000, null));
+        FeedResponse feedResponse = presenter.getFeed(new FeedRequest(signedUpUser, 100000, null));
         Assertions.assertTrue(feedResponse.isSuccess());
         List<Status> statusList = feedResponse.getStatuses();
 
@@ -74,15 +80,15 @@ public class FeedTests {
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
         Assertions.assertFalse(loginResponse.isError());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), loginRequest.getUsername());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         PostResponse postResponse = PostService.getInstance().postStatus("Test Status2");
         Assertions.assertTrue(postResponse.isSuccess());
 
-        List<User> followers = FollowerService.getInstance().getFollowers(new FollowerRequest(loginService.getLoggedInUser(), 10000, null)).getFollowers();
+        List<User> followers = FollowerService.getInstance().getFollowers(new FollowerRequest(presenter.getLoggedInUser(), 10000, null)).getFollowers();
 
         for (User follower: followers) {
-            FeedResponse feedResponse = FeedService.getInstance().getFeed(new FeedRequest(follower, 100000, null));
+            FeedResponse feedResponse = presenter.getFeed(new FeedRequest(follower, 100000, null));
             Assertions.assertTrue(feedResponse.isSuccess());
             List<Status> feed = feedResponse.getStatuses();
             Assertions.assertEquals(feed.get(0).getMessage(), "Test Status2");

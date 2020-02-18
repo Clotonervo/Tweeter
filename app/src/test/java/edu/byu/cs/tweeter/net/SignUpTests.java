@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.net;
 
+import android.view.View;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +24,17 @@ public class SignUpTests {
     private SignUpRequest request;
     private SignUpResponse response;
 
+    public class ViewImplementation implements SignUpPresenter.View {
+        @Override
+        public void register(View v)
+        {
+
+        }
+    }
+
+    private SignUpPresenter presenter = new SignUpPresenter(new ViewImplementation());
+
+
     @AfterEach
     void cleanUp(){
         request = null;
@@ -34,50 +47,43 @@ public class SignUpTests {
     @Test
     void testSignUpNewUser(){
         request = new SignUpRequest("Username", "password", "Test", "SignUP", null);
-        response = service.authenticateUser(request);
-        User signedUpUser = ServerFacade.getInstance().aliasToUser("@Username");
+        response = presenter.signUpUser(request);
+        User signedUpUser = presenter.getUserByAlias("@Username");
 
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertFalse(response.isError());
-
     }
 
     @Test
     void testSignUpAndLogIn(){
         request = new SignUpRequest("Username2", "password", "Test", "SignUP", null);
-        response = service.authenticateUser(request);
+        response = presenter.signUpUser(request);
 
         Assertions.assertFalse(response.isError());
 
-        Assertions.assertNotNull(loginService.getLoggedInUser());
-        Assertions.assertNotNull(loginService.getCurrentUser());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), "@Username2");
+        Assertions.assertNotNull(presenter.getLoggedInUser());
+        Assertions.assertNotNull(presenter.getCurrentUser());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), "@Username2");
     }
 
 
     @Test
     void testSignUpWithErrors(){
         request = new SignUpRequest("Username3", null, "Test", "SignUP", null);
-        response = service.authenticateUser(request);
+        response = presenter.signUpUser(request);
         Assertions.assertTrue(response.isError());
 
-        User signedUpUser = ServerFacade.getInstance().aliasToUser("@Username3");
+        User signedUpUser = presenter.getUserByAlias("@Username3");
         Assertions.assertNull(signedUpUser);
     }
 
     @Test
     void signUpAlreadyExistingUser(){
-//        request = new SignUpRequest("Username", "password", "Test", "SignUP", null);
-//        response = service.authenticateUser(request);
-//
-//        Assertions.assertFalse(response.isError());
-//        Assertions.assertNotNull(signedUpUser);
-
         request = new SignUpRequest("Username", "password", "Test", "SignUP", null);
-        response = service.authenticateUser(request);
+        response = presenter.signUpUser(request);
 
         Assertions.assertTrue(response.isError());
-        User signedUpUser = ServerFacade.getInstance().aliasToUser("@Username");
+        User signedUpUser = presenter.getUserByAlias("@Username");
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertEquals(signedUpUser.getAlias(), "@Username");
     }

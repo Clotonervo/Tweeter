@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.net;
 
+import android.view.View;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +19,36 @@ import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
 import edu.byu.cs.tweeter.net.response.SignUpResponse;
 import edu.byu.cs.tweeter.net.response.UnfollowResponse;
+import edu.byu.cs.tweeter.presenter.MainPresenter;
 
 public class UnfollowTest {
     private UnfollowResponse response;
     private FollowingService service = FollowingService.getInstance();
     private LoginService loginService = LoginService.getInstance();
+
+    public class ViewImplementation implements MainPresenter.View {
+        @Override
+        public void signOut()
+        {
+
+        }
+
+        @Override
+        public void goToPostActivity()
+        {
+
+        }
+
+        @Override
+        public void followUser(View v)
+        {
+
+        }
+    }
+
+    private MainPresenter presenter = new MainPresenter(new ViewImplementation());
+
+
 
     @Test
     void testUnfollow(){
@@ -29,28 +56,28 @@ public class UnfollowTest {
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
         Assertions.assertFalse(loginResponse.isError());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), loginRequest.getUsername());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
 
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser(), 1000, null)).getFollowees();
+        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null)).getFollowees();
         int size = following.size();
-        User userToUnfollow = ServerFacade.getInstance().aliasToUser(following.get(0).getAlias());
+        User userToUnfollow = presenter.getUserByAlias(following.get(0).getAlias());
 
         Assertions.assertNotEquals(following.size(), 0);
 
         loginService.setCurrentUser(userToUnfollow);
 
-        response = service.unfollowUser(new Follow(loginService.getLoggedInUser(), loginService.getCurrentUser()));
+        response = presenter.unFollowUser(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
 
         Assertions.assertTrue(response.isSuccess());
         following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser(), 1000, null)).getFollowees();
 
         Assertions.assertEquals(following.size(), size - 1);
-        Assertions.assertNotEquals(following.get(0), loginService.getCurrentUser());
+        Assertions.assertNotEquals(following.get(0), presenter.getCurrentUser());
 
-        List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(loginService.getCurrentUser(), 1000, null)).getFollowers();
+        List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(presenter.getCurrentUser(), 1000, null)).getFollowers();
 
-        Assertions.assertFalse(followers.contains(loginService.getLoggedInUser()));
+        Assertions.assertFalse(followers.contains(presenter.getLoggedInUser()));
 
     }
 

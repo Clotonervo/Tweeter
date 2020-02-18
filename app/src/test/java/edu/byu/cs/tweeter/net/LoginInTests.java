@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.net;
 
 import android.util.Log;
+import android.view.View;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +22,24 @@ public class LoginInTests {
     private LoginRequest request;
     private LoginResponse response;
 
+    public class ViewImplementation implements LoginPresenter.View {
+        @Override
+        public void login(View v)
+        {
+            //Called in View
+        }
+
+        @Override
+        public void signUp(View v)
+        {
+            //Called in View
+        }
+    }
+
+    private LoginPresenter presenter = new LoginPresenter(new ViewImplementation()); //TODO: Check this
+
+
+
     @AfterEach
     void cleanUp(){
         request = null;
@@ -33,29 +52,29 @@ public class LoginInTests {
     @Test
     void testBasicLoginTestWithTestUser(){
         request = new LoginRequest("@TestUser", "password");
-        response = loginService.authenticateUser(request);
+        response = presenter.loginUser(request);
 
         Assertions.assertFalse(response.isError());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), request.getUsername());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), request.getUsername());
 
     }
 
     @Test
     void testInvalidUserCredentials(){
         request = new LoginRequest("NotValid", "password");
-        response = loginService.authenticateUser(request);
+        response = presenter.loginUser(request);
 
         Assertions.assertTrue(response.isError());
-        Assertions.assertNull(loginService.getCurrentUser());
+        Assertions.assertNull(presenter.getCurrentUser());
     }
 
     @Test
     void testInvalidPassword(){
         request = new LoginRequest("@TestUser", "notValid");
-        response = loginService.authenticateUser(request);
+        response = presenter.loginUser(request);
 
         Assertions.assertTrue(response.isError());
-        Assertions.assertNull(loginService.getCurrentUser());
+        Assertions.assertNull(presenter.getCurrentUser());
     }
 
     @Test
@@ -65,20 +84,20 @@ public class LoginInTests {
 
         Assertions.assertFalse(signUpResponse.isError());
 
-        Assertions.assertNotNull(loginService.getCurrentUser());
-        Assertions.assertNotNull(loginService.getLoggedInUser());
+        Assertions.assertNotNull(presenter.getCurrentUser());
+        Assertions.assertNotNull(presenter.getLoggedInUser());
 
-        User signedInUser = loginService.getLoggedInUser();
+        User signedInUser = presenter.getLoggedInUser();
 
         loginService.setLoggedInUser(null);
         loginService.setCurrentUser(null);
 
         request = new LoginRequest("@Username5", "password");
-        response = loginService.authenticateUser(request);
+        response = presenter.loginUser(request);
 
         Assertions.assertFalse(response.isError());
-        Assertions.assertNotNull(loginService.getLoggedInUser());
-        Assertions.assertNotNull(loginService.getCurrentUser());
-        Assertions.assertEquals(loginService.getCurrentUser(), signedInUser);
+        Assertions.assertNotNull(presenter.getLoggedInUser());
+        Assertions.assertNotNull(presenter.getCurrentUser());
+        Assertions.assertEquals(presenter.getCurrentUser(), signedInUser);
     }
 }

@@ -22,7 +22,7 @@ public class FollowerPresenter extends Presenter {
         this.view = view;
     }
 
-    public FollowerResponse getFollowing(FollowerRequest request) {
+    public FollowerResponse getFollowers(FollowerRequest request) {
         return FollowerService.getInstance().getFollowers(request);
     }
 }

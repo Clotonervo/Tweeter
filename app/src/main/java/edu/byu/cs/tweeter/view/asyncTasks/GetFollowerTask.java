@@ -29,7 +29,7 @@ public class GetFollowerTask extends AsyncTask<FollowerRequest, Void, FollowerRe
 
     @Override
     protected FollowerResponse doInBackground(FollowerRequest... followerRequests) {
-        FollowerResponse response = presenter.getFollowing(followerRequests[0]);
+        FollowerResponse response = presenter.getFollowers(followerRequests[0]);
         loadImages(response);
         return response;
     }

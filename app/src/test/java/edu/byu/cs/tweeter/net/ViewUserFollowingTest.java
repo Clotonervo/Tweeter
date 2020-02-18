@@ -1,49 +1,62 @@
 package edu.byu.cs.tweeter.net;
 
+import android.view.View;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.FollowerService;
 import edu.byu.cs.tweeter.model.services.FollowingService;
 import edu.byu.cs.tweeter.model.services.LoginService;
-import edu.byu.cs.tweeter.net.request.FollowerRequest;
+import edu.byu.cs.tweeter.model.services.StoryService;
 import edu.byu.cs.tweeter.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.net.request.LoginRequest;
-import edu.byu.cs.tweeter.net.response.FollowerResponse;
+import edu.byu.cs.tweeter.net.request.StoryRequest;
 import edu.byu.cs.tweeter.net.response.FollowingResponse;
 import edu.byu.cs.tweeter.net.response.LoginResponse;
+import edu.byu.cs.tweeter.net.response.StoryResponse;
+import edu.byu.cs.tweeter.presenter.FollowerPresenter;
+import edu.byu.cs.tweeter.presenter.FollowingPresenter;
 
 public class ViewUserFollowingTest {
 
     private LoginService loginService = LoginService.getInstance();
 
+    public class ViewImplementation implements FollowingPresenter.View {
+
+    }
+
+    private FollowingPresenter presenter = new FollowingPresenter(new ViewImplementation());
+
+
     @Test
-    void viewOtherUserFollowers(){
+    void viewOtherUserFollowings(){
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
         Assertions.assertFalse(loginResponse.isError());
-        Assertions.assertEquals(loginService.getCurrentUser().getAlias(), loginRequest.getUsername());
+        Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
-        FollowerResponse response = FollowerService.getInstance().getFollowers(new FollowerRequest(loginService.getLoggedInUser(), 1000, null));
+        FollowingResponse response = presenter.getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
-        List<User> followers = response.getFollowers();
-        loginService.setCurrentUser(followers.get(0));
+        List<User> following = response.getFollowees();
+        loginService.setCurrentUser(following.get(0));
 
 
-        response = FollowerService.getInstance().getFollowers(new FollowerRequest(loginService.getCurrentUser(), 1000, null));
+        response = presenter.getFollowing(new FollowingRequest(presenter.getCurrentUser(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
-        List<User> followersOtherUser = response.getFollowers();
+        List<User> followingOtherUser = response.getFollowees();
 
-        Assertions.assertNotEquals(followers, followersOtherUser);
+        Assertions.assertNotEquals(following, followingOtherUser);
 
-        for (User user: followersOtherUser) {
-            Assertions.assertNotEquals(user.getAlias(), loginService.getCurrentUser());
+        for (User user: followingOtherUser) {
+            Assertions.assertNotEquals(user.getAlias(), presenter.getCurrentUser());
         }
     }
 }
