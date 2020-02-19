@@ -41,7 +41,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
                 String userAlias = searchUser.getText().toString();
                 User newUser = presenter.getUserByAlias(userAlias);
                 if(newUser != null){
-                    LoginService.getInstance().setCurrentUser(newUser);
+                    presenter.setCurrentUser(newUser);
 
                     Intent intent = new Intent(view.getContext(), MainActivity.class);
                     startActivity(intent);

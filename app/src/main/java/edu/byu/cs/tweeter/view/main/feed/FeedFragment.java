@@ -109,7 +109,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
                     String s = tx.getText().toString();
                     User newUser = presenter.getUserByAlias(tx.getText().toString());
                     if(newUser != null){
-                        LoginService.getInstance().setCurrentUser(newUser);
+                        presenter.setCurrentUser(newUser);
 
                         Intent intent = new Intent(textView.getContext(), MainActivity.class);
                         itemView.getContext().startActivity(intent);

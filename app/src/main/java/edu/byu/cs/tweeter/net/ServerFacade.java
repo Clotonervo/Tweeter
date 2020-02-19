@@ -90,6 +90,12 @@ public class ServerFacade {
             }
         }
 
+        Collections.sort(responseFollowers, new Comparator<User>() {
+            public int compare(User o1, User o2) {
+                return o1.getFirstName().compareTo(o1.getFirstName());
+            }
+        });
+
         return new FollowerResponse(responseFollowers, hasMorePages);
     }
 
@@ -120,6 +126,12 @@ public class ServerFacade {
                 hasMorePages = followeesIndex < allFollowees.size();
             }
         }
+
+        Collections.sort(responseFollowees, new Comparator<User>() {
+            public int compare(User o1, User o2) {
+                return o2.getFirstName().compareTo(o1.getFirstName());
+            }
+        });
 
         return new FollowingResponse(responseFollowees, hasMorePages);
     }
@@ -450,7 +462,7 @@ public class ServerFacade {
         }
 
 
-        return new PostResponse(true, "Everything smooth");
+        return new PostResponse(true, "Post successfully posted!");
     }
 
 

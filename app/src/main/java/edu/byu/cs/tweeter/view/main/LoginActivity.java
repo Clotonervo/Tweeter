@@ -13,7 +13,7 @@ import edu.byu.cs.tweeter.net.request.LoginRequest;
 import edu.byu.cs.tweeter.presenter.LoginPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.LoginTask;
 
-public class LoginActivity extends AppCompatActivity implements LoginPresenter.View, LoginTask.LoginContext {
+public class LoginActivity extends AppCompatActivity implements LoginPresenter.View, LoginTask.LoginObserver {
 
     private EditText mUsername;
     private EditText mPassword;
@@ -39,7 +39,6 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
     public void login(View v){
         LoginTask loginTask = new LoginTask(this, presenter);
         LoginRequest loginRequest = new LoginRequest(mUsername.getText().toString(), mPassword.getText().toString());
-
         loginTask.execute(loginRequest);
     }
 
@@ -50,17 +49,16 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter.V
     }
 
     @Override
-    public void onExecuteComplete(String message, Boolean error){
-        System.out.println(message);
-        if(error) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+    public void loginSuccess(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void loginError(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
 }

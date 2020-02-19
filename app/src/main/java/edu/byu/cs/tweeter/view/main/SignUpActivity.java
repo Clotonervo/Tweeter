@@ -23,7 +23,7 @@ import edu.byu.cs.tweeter.net.request.SignUpRequest;
 import edu.byu.cs.tweeter.presenter.SignUpPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.SignUpTask;
 
-public class SignUpActivity extends AppCompatActivity implements SignUpPresenter.View, SignUpTask.SignUpContext {
+public class SignUpActivity extends AppCompatActivity implements SignUpPresenter.View, SignUpTask.SignUpObserver {
 
     private SignUpPresenter presenter;
 
@@ -101,16 +101,15 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
     }
 
     @Override
-    public void onExecuteComplete(String message, Boolean error){
-        System.out.println(message);
-        if(error) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
+    public void signUpSuccess(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void signUpError(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
 

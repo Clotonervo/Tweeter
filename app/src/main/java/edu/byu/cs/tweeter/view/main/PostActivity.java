@@ -7,13 +7,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.presenter.PostPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.PostTask;
 
-public class PostActivity extends AppCompatActivity implements PostPresenter.View, PostTask.PostContext {
+public class PostActivity extends AppCompatActivity implements PostPresenter.View, PostTask.PostObserver {
 
     private Button postButton;
     private EditText postMessage;
@@ -36,17 +35,16 @@ public class PostActivity extends AppCompatActivity implements PostPresenter.Vie
     }
 
     @Override
-    public void onExecuteComplete(String message, Boolean success){
-        System.out.println(message);
-        if(!success) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+    public void postSuccess(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void postError(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
     public void postStatus(View v){

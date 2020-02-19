@@ -79,7 +79,7 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
-                    LoginService.getInstance().setCurrentUser(presenter.getUserByAlias(userAlias.getText().toString()));
+                    presenter.setCurrentUser(presenter.getUserByAlias(userAlias.getText().toString()));
 
                     Intent intent = new Intent(view.getContext(), MainActivity.class);
                     itemView.getContext().startActivity(intent);

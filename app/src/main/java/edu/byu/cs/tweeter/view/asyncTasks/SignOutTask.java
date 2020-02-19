@@ -7,18 +7,19 @@ import edu.byu.cs.tweeter.presenter.MainPresenter;
 
 public class SignOutTask extends AsyncTask<Void, Void, SignOutResponse> {
 
-    private SignOutContext context;
+    private SignOutObserver observer;
     private MainPresenter presenter;
 
     ///////// Interface //////////
-    public interface SignOutContext {
-        void onExecuteComplete(String message, Boolean error);
+    public interface SignOutObserver {
+        void signOutSuccess(String message);
+        void signOutError(String message);
     }
 
-    public SignOutTask(SignOutContext c, MainPresenter p)
+    public SignOutTask(SignOutObserver c, MainPresenter p)
     {
         presenter = p;
-        context = c;
+        observer = c;
     }
 
     @Override
@@ -31,6 +32,11 @@ public class SignOutTask extends AsyncTask<Void, Void, SignOutResponse> {
     @Override
     protected void onPostExecute(SignOutResponse signOutResponse)
     {
-        context.onExecuteComplete(signOutResponse.getMessage(), signOutResponse.isSuccess());
+        if(signOutResponse.isSuccess()){
+            observer.signOutSuccess(signOutResponse.getMessage());
+        }
+        else {
+            observer.signOutError(signOutResponse.getMessage());
+        }
     }
 }

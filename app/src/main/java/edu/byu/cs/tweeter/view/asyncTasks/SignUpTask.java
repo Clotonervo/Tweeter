@@ -9,18 +9,19 @@ import edu.byu.cs.tweeter.presenter.SignUpPresenter;
 
 public class SignUpTask extends AsyncTask<SignUpRequest, Void, SignUpResponse> {
 
-    private SignUpContext context;
+    private SignUpObserver observer;
     private SignUpPresenter presenter;
 
     ///////// Interface //////////
-    public interface SignUpContext {
-        void onExecuteComplete(String message, Boolean error);
+    public interface SignUpObserver {
+        void signUpSuccess(String message);
+        void signUpError(String message);
     }
 
-    public SignUpTask(SignUpContext c, SignUpPresenter p)
+    public SignUpTask(SignUpObserver c, SignUpPresenter p)
     {
         presenter = p;
-        context = c;
+        observer = c;
     }
 
     @Override
@@ -33,7 +34,12 @@ public class SignUpTask extends AsyncTask<SignUpRequest, Void, SignUpResponse> {
     @Override
     protected void onPostExecute(SignUpResponse signUpResponse)
     {
-        context.onExecuteComplete(signUpResponse.getMessage(), signUpResponse.isError());
+        if(signUpResponse.isError()){
+            observer.signUpError(signUpResponse.getMessage());
+        }
+        else {
+            observer.signUpSuccess(signUpResponse.getMessage());
+        }
     }
 }
 

@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.services.LoginService;
 import edu.byu.cs.tweeter.net.request.StoryRequest;
 import edu.byu.cs.tweeter.net.response.StoryResponse;
 import edu.byu.cs.tweeter.presenter.StoryPresenter;
@@ -82,14 +81,6 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             userName = itemView.findViewById(R.id.userName);
             message = itemView.findViewById(R.id.message);
 
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
-
         }
 
         void bindUser(Status status) {
@@ -109,7 +100,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
                     String s = tx.getText().toString();
                     User newUser = presenter.getUserByAlias(tx.getText().toString());
                     if(newUser != null){
-                        LoginService.getInstance().setCurrentUser(newUser);
+                        presenter.setCurrentUser(newUser);
 
                         Intent intent = new Intent(textView.getContext(), MainActivity.class);
                         itemView.getContext().startActivity(intent);

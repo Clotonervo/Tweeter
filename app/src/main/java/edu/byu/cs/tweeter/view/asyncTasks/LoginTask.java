@@ -8,19 +8,20 @@ import edu.byu.cs.tweeter.presenter.LoginPresenter;
 
 public class LoginTask extends AsyncTask<LoginRequest, Void, LoginResponse> {
 
-    private LoginContext context;
+    private LoginObserver observer;
     private LoginPresenter presenter;
 
     ///////// Interface //////////
-    public interface LoginContext {
-        void onExecuteComplete(String message, Boolean error);
+    public interface LoginObserver {
+        void loginSuccess(String message);
+        void loginError(String error);
     }
 
     // ========================== Constructor ========================================
-    public LoginTask(LoginContext c, LoginPresenter p)
+    public LoginTask(LoginObserver c, LoginPresenter p)
     {
         presenter = p;
-        context = c;
+        observer = c;
     }
 
     //--****************-- Do In Background --***************--
@@ -35,6 +36,11 @@ public class LoginTask extends AsyncTask<LoginRequest, Void, LoginResponse> {
     @Override
     protected void onPostExecute(LoginResponse loginResponse)
     {
-            context.onExecuteComplete(loginResponse.getMessage(), loginResponse.isError());
+        if(loginResponse.isError()) {
+            observer.loginError(loginResponse.getMessage());
+        }
+        else {
+            observer.loginSuccess(loginResponse.getMessage());
+        }
     }
 }

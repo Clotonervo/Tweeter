@@ -5,23 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,18 +20,14 @@ import edu.byu.cs.tweeter.R;
 import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.services.LoginService;
-import edu.byu.cs.tweeter.net.response.SignOutResponse;
 import edu.byu.cs.tweeter.presenter.MainPresenter;
-import edu.byu.cs.tweeter.presenter.SearchPresenter;
 import edu.byu.cs.tweeter.view.asyncTasks.FollowUserTask;
 import edu.byu.cs.tweeter.view.asyncTasks.LoadImageTask;
-import edu.byu.cs.tweeter.view.asyncTasks.PostTask;
 import edu.byu.cs.tweeter.view.asyncTasks.SignOutTask;
-import edu.byu.cs.tweeter.view.asyncTasks.SignUpTask;
 import edu.byu.cs.tweeter.view.asyncTasks.UnfollowUserTask;
 import edu.byu.cs.tweeter.view.cache.ImageCache;
 
-public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutContext, FollowUserTask.FollowUserContext, UnfollowUserTask.UnfollowUserContext {
+public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutObserver, FollowUserTask.FollowUserContext, UnfollowUserTask.UnfollowUserContext {
 
     private MainPresenter presenter;
     private User user;
@@ -157,31 +144,25 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
             UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
             followButton.setText(R.string.follow_button);
             unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
-
-
         }
         else {
             FollowUserTask followUserTask = new FollowUserTask(this, presenter);
             followButton.setText(R.string.unfollow_button);
             followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
         }
-
-
-
     }
 
     @Override
-    public void onExecuteComplete(String message, Boolean success){
-        System.out.println(message);
-        if(!success) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-        }
+    public void signOutSuccess(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void signOutError(String error){
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -199,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
-        LoginService.getInstance().setCurrentUser(LoginService.getInstance().getLoggedInUser());
+        presenter.setCurrentUser(presenter.getLoggedInUser());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
