@@ -28,8 +28,7 @@ public class MainPresenter extends Presenter {
     }
 
     public SignOutResponse signOut(){
-        LoginService.getInstance().setCurrentUser(null);
-        LoginService.getInstance().setLoggedInUser(null);
+        LoginService.getInstance().signOutUser();
         return new SignOutResponse(true, "Logged out!");
     }
 

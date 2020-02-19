@@ -51,6 +51,12 @@ public class LoginService {
         }
     }
 
+    public void signOutUser(){
+        setCurrentUser(null);
+        setLoggedInUser(null);
+        serverFacade.signOutUser();
+    }
+
     public User aliasToUser(String alias){
         return serverFacade.aliasToUser(alias);
     }

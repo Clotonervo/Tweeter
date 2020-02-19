@@ -534,6 +534,13 @@ public class ServerFacade {
         }
     }
 
+    /*
+             --------------------- sign out User
+     */
+    public void signOutUser(){
+        //Communicate with back end to destroy auth tokens
+    }
+
 
     /*
     Getters and setter for testing
