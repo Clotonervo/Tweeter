@@ -3,11 +3,11 @@ package edu.byu.cs.client.net.response;
 public class SignUpResponse {
 
     private String message;
-    private boolean error;
+    private boolean success;
 
-    public SignUpResponse(String message, boolean error) {
+    public SignUpResponse(String message, boolean success) {
         this.message = message;
-        this.error = error;
+        this.success = success;
     }
 
     public String getMessage() {
@@ -18,11 +18,11 @@ public class SignUpResponse {
         this.message = message;
     }
 
-    public boolean isError() {
-        return error;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setError(boolean error) {
-        this.error = error;
+    public void setError(boolean success) {
+        this.success = success;
     }
 }

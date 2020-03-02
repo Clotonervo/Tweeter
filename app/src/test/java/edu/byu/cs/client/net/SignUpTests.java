@@ -47,7 +47,7 @@ public class SignUpTests {
         User signedUpUser = presenter.getUserByAlias("@Username");
 
         Assertions.assertNotNull(signedUpUser);
-        Assertions.assertFalse(response.isError());
+        Assertions.assertTrue(response.isSuccess());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SignUpTests {
         request = new SignUpRequest("Username2", "password", "Test", "SignUP", null);
         response = presenter.signUpUser(request);
 
-        Assertions.assertFalse(response.isError());
+        Assertions.assertTrue(response.isSuccess());
 
         Assertions.assertNotNull(presenter.getLoggedInUser());
         Assertions.assertNotNull(presenter.getCurrentUser());
@@ -67,7 +67,7 @@ public class SignUpTests {
     void testSignUpWithErrors(){
         request = new SignUpRequest("Username3", null, "Test", "SignUP", null);
         response = presenter.signUpUser(request);
-        Assertions.assertTrue(response.isError());
+        Assertions.assertFalse(response.isSuccess());
 
         User signedUpUser = presenter.getUserByAlias("@Username3");
         Assertions.assertNull(signedUpUser);
@@ -78,7 +78,7 @@ public class SignUpTests {
         request = new SignUpRequest("Username", "password", "Test", "SignUP", null);
         response = presenter.signUpUser(request);
 
-        Assertions.assertTrue(response.isError());
+        Assertions.assertFalse(response.isSuccess());
         User signedUpUser = presenter.getUserByAlias("@Username");
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertEquals(signedUpUser.getAlias(), "@Username");

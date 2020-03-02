@@ -40,7 +40,7 @@ public class LoginService {
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
         LoginResponse loginResponse = serverFacade.authenticateUser(loginRequest);
-        if (loginResponse.isError()){
+        if (!loginResponse.isSuccess()){
             return loginResponse;
         }
         else {

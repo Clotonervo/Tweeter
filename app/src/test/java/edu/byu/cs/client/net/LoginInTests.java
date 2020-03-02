@@ -53,7 +53,7 @@ public class LoginInTests {
         request = new LoginRequest("@TestUser", "password");
         response = presenter.loginUser(request);
 
-        Assertions.assertFalse(response.isError());
+        Assertions.assertTrue(response.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), request.getUsername());
 
     }
@@ -63,7 +63,7 @@ public class LoginInTests {
         request = new LoginRequest("NotValid", "password");
         response = presenter.loginUser(request);
 
-        Assertions.assertTrue(response.isError());
+        Assertions.assertFalse(response.isSuccess());
         Assertions.assertNull(presenter.getCurrentUser());
     }
 
@@ -72,7 +72,7 @@ public class LoginInTests {
         request = new LoginRequest("@TestUser", "notValid");
         response = presenter.loginUser(request);
 
-        Assertions.assertTrue(response.isError());
+        Assertions.assertFalse(response.isSuccess());
         Assertions.assertNull(presenter.getCurrentUser());
     }
 
@@ -81,7 +81,7 @@ public class LoginInTests {
         SignUpRequest signUpRequest = new SignUpRequest("Username5", "password", "Test", "Me", null);
         SignUpResponse signUpResponse = SignUpService.getInstance().authenticateUser(signUpRequest);
 
-        Assertions.assertFalse(signUpResponse.isError());
+        Assertions.assertTrue(signUpResponse.isSuccess());
 
         Assertions.assertNotNull(presenter.getCurrentUser());
         Assertions.assertNotNull(presenter.getLoggedInUser());
@@ -94,7 +94,7 @@ public class LoginInTests {
         request = new LoginRequest("@Username5", "password");
         response = presenter.loginUser(request);
 
-        Assertions.assertFalse(response.isError());
+        Assertions.assertTrue(response.isSuccess());
         Assertions.assertNotNull(presenter.getLoggedInUser());
         Assertions.assertNotNull(presenter.getCurrentUser());
         Assertions.assertEquals(presenter.getCurrentUser(), signedInUser);

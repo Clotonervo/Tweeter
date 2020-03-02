@@ -29,7 +29,7 @@ public class PostStatusTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         response = presenter.sendPostInfo("Test Status");
@@ -42,7 +42,7 @@ public class PostStatusTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         response = presenter.sendPostInfo("Test Status2");
@@ -59,7 +59,7 @@ public class PostStatusTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         response = presenter.sendPostInfo("@test @mytestuser @moretests");
@@ -77,7 +77,7 @@ public class PostStatusTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         response = presenter.sendPostInfo("www.google.com www.test.com www.twitter.com");
@@ -95,7 +95,7 @@ public class PostStatusTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         response = presenter.sendPostInfo("www.google.com @test @mytestuser @moretests www.test.com www.twitter.com");

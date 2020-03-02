@@ -52,7 +52,7 @@ public class UnfollowTest {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
 

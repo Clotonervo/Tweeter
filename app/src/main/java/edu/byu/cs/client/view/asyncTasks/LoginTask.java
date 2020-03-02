@@ -36,11 +36,11 @@ public class LoginTask extends AsyncTask<LoginRequest, Void, LoginResponse> {
     @Override
     protected void onPostExecute(LoginResponse loginResponse)
     {
-        if(loginResponse.isError()) {
-            observer.loginError(loginResponse.getMessage());
+        if(loginResponse.isSuccess()) {
+            observer.loginSuccess(loginResponse.getMessage());
         }
         else {
-            observer.loginSuccess(loginResponse.getMessage());
+            observer.loginError(loginResponse.getMessage());
         }
     }
 }

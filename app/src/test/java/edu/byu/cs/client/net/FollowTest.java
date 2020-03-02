@@ -57,7 +57,7 @@ public class FollowTest {
         User signedUpUser = presenter.getUserByAlias("@Username6");
 
         Assertions.assertNotNull(signedUpUser);
-        Assertions.assertFalse(signUpResponse.isError());
+        Assertions.assertTrue(signUpResponse.isSuccess());
 
 
         List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null)).getFollowees();

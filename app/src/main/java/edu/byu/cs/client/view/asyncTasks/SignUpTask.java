@@ -34,7 +34,7 @@ public class SignUpTask extends AsyncTask<SignUpRequest, Void, SignUpResponse> {
     @Override
     protected void onPostExecute(SignUpResponse signUpResponse)
     {
-        if(signUpResponse.isError()){
+        if(signUpResponse.isSuccess()){
             observer.signUpError(signUpResponse.getMessage());
         }
         else {

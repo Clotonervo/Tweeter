@@ -220,10 +220,10 @@ public class ServerFacade {
             if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
             && (loginRequest.getPassword().equals("password")
             || loginRequest.getPassword().equals("x"))){
-                return new LoginResponse("Login successful!", false, allUsers.get(i));
+                return new LoginResponse("Login successful!", true, allUsers.get(i));
             }
         }
-        return new LoginResponse("Invalid credentials", true);
+        return new LoginResponse("Invalid credentials");
 
     }
 
@@ -274,7 +274,7 @@ public class ServerFacade {
 
         if(signUpRequest.getFirstName() == null || signUpRequest.getLastName() == null
                 || signUpRequest.getPassword() == null || signUpRequest.getUsername() == null){
-            return new SignUpResponse("Not all forms filled out!", true);
+            return new SignUpResponse("Not all forms filled out!", false);
         }
 
 
@@ -283,7 +283,7 @@ public class ServerFacade {
 
         for (User user: allUsers) {
             if(user.getAlias().equals(signedUpUser.getAlias())){
-                return new SignUpResponse("Username already exists!", true);
+                return new SignUpResponse("Username already exists!", false);
             }
         }
 
@@ -317,7 +317,7 @@ public class ServerFacade {
         allUsers.add(signedUpUser);
 
 
-        return new SignUpResponse("Signed up successfully!", false);
+        return new SignUpResponse("Signed up successfully!", true);
     }
 
     /*

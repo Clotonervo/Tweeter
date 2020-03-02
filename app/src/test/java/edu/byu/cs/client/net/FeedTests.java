@@ -36,7 +36,7 @@ public class FeedTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         Map<User, List<Status>> userFeeds = ServerFacade.getInstance().getUserFeeds();
@@ -59,7 +59,7 @@ public class FeedTests {
         User signedUpUser = presenter.getUserByAlias("@Username1");
 
         Assertions.assertNotNull(signedUpUser);
-        Assertions.assertFalse(signUpResponse.isError());
+        Assertions.assertTrue(signUpResponse.isSuccess());
 
         FeedResponse feedResponse = presenter.getFeed(new FeedRequest(signedUpUser, 100000, null));
         Assertions.assertTrue(feedResponse.isSuccess());
@@ -74,7 +74,7 @@ public class FeedTests {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         PostResponse postResponse = PostService.getInstance().postStatus("Test Status2");

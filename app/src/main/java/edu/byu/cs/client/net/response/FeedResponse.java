@@ -9,6 +9,10 @@ public class FeedResponse extends PagedResponse  {
     private List<Status> statuses;
     private List<User> following;
 
+    public FeedResponse(String message){
+        super(false, message, false);
+    }
+
     public FeedResponse(boolean success, String message, boolean hasMorePages, List<Status> statuses, List<User> users)
     {
         super(success, message, hasMorePages);
@@ -28,5 +32,9 @@ public class FeedResponse extends PagedResponse  {
 
     public List<User> getFollowing() {
         return following;
+    }
+
+    public boolean isSuccess() {
+        return super.isSuccess();
     }
 }

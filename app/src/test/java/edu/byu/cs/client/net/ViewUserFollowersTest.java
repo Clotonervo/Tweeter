@@ -28,7 +28,7 @@ public class ViewUserFollowersTest {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         FollowerResponse response = presenter.getFollowers(new FollowerRequest(presenter.getLoggedInUser(), 1000, null));

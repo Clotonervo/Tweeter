@@ -20,4 +20,8 @@ public class FollowerResponse extends PagedResponse {
     public List<User> getFollowers() {
         return followers;
     }
+
+    public boolean isSuccess() {
+        return super.isSuccess();
+    }
 }

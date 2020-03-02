@@ -29,7 +29,7 @@ public class ViewUserFollowingTest {
         LoginRequest loginRequest = new LoginRequest("@TestUser", "password");
         LoginResponse loginResponse = loginService.authenticateUser(loginRequest);
 
-        Assertions.assertFalse(loginResponse.isError());
+        Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
         FollowingResponse response = presenter.getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null));

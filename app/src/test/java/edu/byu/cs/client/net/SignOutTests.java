@@ -54,7 +54,7 @@ public class SignOutTests {
         LoginRequest request = new LoginRequest("@TestUser", "password");
         LoginResponse response = loginService.authenticateUser(request);
 
-        Assertions.assertFalse(response.isError());
+        Assertions.assertTrue(response.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), request.getUsername());
 
         loginService.setCurrentUser(null);
@@ -71,7 +71,7 @@ public class SignOutTests {
         User signedUpUser = presenter.getUserByAlias("@Username9");
 
         Assertions.assertNotNull(signedUpUser);
-        Assertions.assertFalse(signUpResponse.isError());
+        Assertions.assertTrue(signUpResponse.isSuccess());
 
         loginService.setLoggedInUser(null);
         loginService.setCurrentUser(null);

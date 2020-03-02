@@ -5,18 +5,18 @@ import edu.byu.cs.client.model.domain.User;
 public class LoginResponse {
 
     private String message;
-    private boolean error;
+    private boolean success;
     private User user;
 
-    public LoginResponse(String message, boolean error) {
+    public LoginResponse(String message) {
         this.message = message;
-        this.error = error;
+        this.success = false;
         this.user = null;
     }
 
-    public LoginResponse(String message, boolean error, User user){
+    public LoginResponse(String message, boolean success, User user){
         this.message = message;
-        this.error = error;
+        this.success = success;
         this.user = user;
     }
 
@@ -28,12 +28,12 @@ public class LoginResponse {
         this.message = message;
     }
 
-    public boolean isError() {
-        return error;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setError(boolean error) {
-        this.error = error;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public User getUser()
