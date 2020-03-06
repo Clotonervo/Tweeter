@@ -56,7 +56,7 @@ public class UnfollowTest {
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
 
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null)).getFollowees();
+        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
         int size = following.size();
         User userToUnfollow = presenter.getUserByAlias(following.get(0).getAlias());
 
@@ -67,7 +67,7 @@ public class UnfollowTest {
         response = presenter.unFollowUser(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
 
         Assertions.assertTrue(response.isSuccess());
-        following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser(), 1000, null)).getFollowees();
+        following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
 
         Assertions.assertEquals(following.size(), size - 1);
         Assertions.assertNotEquals(following.get(0), presenter.getCurrentUser());

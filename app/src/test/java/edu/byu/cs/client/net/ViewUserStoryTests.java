@@ -33,7 +33,7 @@ public class ViewUserStoryTests {
         Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null)).getFollowees();
+        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
         StoryResponse response = presenter.getStory(new StoryRequest(presenter.getLoggedInUser(), 10, null));
         Assertions.assertFalse(response.isError());
         List<Status> storyUserLoggedIn = response.getStatusList();

@@ -60,7 +60,7 @@ public class FollowTest {
         Assertions.assertTrue(signUpResponse.isSuccess());
 
 
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null)).getFollowees();
+        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
 
         Assertions.assertEquals(following.size(), 1);
         loginService.setCurrentUser(presenter.getUserByAlias("@TestUser"));
@@ -69,7 +69,7 @@ public class FollowTest {
 
         Assertions.assertTrue(response.isSuccess());
 
-        FollowingResponse followingResponse = service.getFollowees(new FollowingRequest(presenter.getLoggedInUser(), 1000, null));
+        FollowingResponse followingResponse = service.getFollowees(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null));
         Assertions.assertTrue(followingResponse.isSuccess());
         following = followingResponse.getFollowees();
 

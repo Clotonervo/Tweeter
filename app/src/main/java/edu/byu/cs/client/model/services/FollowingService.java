@@ -1,5 +1,7 @@
 package edu.byu.cs.client.model.services;
 
+import java.io.IOException;
+
 import edu.byu.cs.client.model.domain.Follow;
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.FollowingRequest;
@@ -10,7 +12,7 @@ import edu.byu.cs.client.net.response.UnfollowResponse;
 public class FollowingService {
 
     private static FollowingService instance;
-
+    private static final String URL_PATH = "/following";
     private final ServerFacade serverFacade;
 
     public static FollowingService getInstance() {
@@ -26,7 +28,12 @@ public class FollowingService {
     }
 
     public FollowingResponse getFollowees(FollowingRequest request) {
-        return serverFacade.getFollowing(request);
+        try{
+            return serverFacade.getFollowees(request, URL_PATH);
+        }
+        catch (IOException x){
+            return new FollowingResponse("IOException caught, something went wrong");
+        }
     }
 
     public UnfollowResponse unfollowUser(Follow follow){

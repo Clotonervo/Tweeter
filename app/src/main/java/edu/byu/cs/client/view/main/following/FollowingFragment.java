@@ -164,8 +164,14 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             addLoadingFooter();
 
             GetFollowingTask getFollowingTask = new GetFollowingTask(presenter, this);
-            FollowingRequest request = new FollowingRequest(presenter.getCurrentUser(), PAGE_SIZE, lastFollowee);
-            getFollowingTask.execute(request);
+            if(lastFollowee != null) {
+                FollowingRequest request = new FollowingRequest(presenter.getCurrentUser().getAlias(), PAGE_SIZE, lastFollowee.getAlias());
+                getFollowingTask.execute(request);
+            }
+            else {
+                FollowingRequest request = new FollowingRequest(presenter.getCurrentUser().getAlias(), PAGE_SIZE, null);
+                getFollowingTask.execute(request);
+            }
         }
 
         @Override

@@ -32,14 +32,14 @@ public class ViewUserFollowingTest {
         Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
-        FollowingResponse response = presenter.getFollowing(new FollowingRequest(presenter.getLoggedInUser(), 1000, null));
+        FollowingResponse response = presenter.getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
         List<User> following = response.getFollowees();
         loginService.setCurrentUser(following.get(0));
 
 
-        response = presenter.getFollowing(new FollowingRequest(presenter.getCurrentUser(), 1000, null));
+        response = presenter.getFollowing(new FollowingRequest(presenter.getCurrentUser().getAlias(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
         List<User> followingOtherUser = response.getFollowees();

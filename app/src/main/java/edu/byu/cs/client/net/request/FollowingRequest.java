@@ -1,20 +1,19 @@
 package edu.byu.cs.client.net.request;
 
-import edu.byu.cs.client.model.domain.User;
 
 public class FollowingRequest {
 
-    private final User follower;
+    private final String follower;
     private final int limit;
-    private final User lastFollowee;
+    private final String lastFollowee;
 
-    public FollowingRequest(User follower, int limit, User lastFollowee) {
+    public FollowingRequest(String follower, int limit, String lastFollowee) {
         this.follower = follower;
         this.limit = limit;
         this.lastFollowee = lastFollowee;
     }
 
-    public User getFollower() {
+    public String getFollower() {
         return follower;
     }
 
@@ -22,7 +21,7 @@ public class FollowingRequest {
         return limit;
     }
 
-    public User getLastFollowee() {
+    public String getLastFollowee() {
         return lastFollowee;
     }
 }
