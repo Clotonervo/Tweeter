@@ -80,7 +80,7 @@ public class FeedTests {
         PostResponse postResponse = PostService.getInstance().postStatus("Test Status2");
         Assertions.assertTrue(postResponse.isSuccess());
 
-        List<User> followers = FollowerService.getInstance().getFollowers(new FollowerRequest(presenter.getLoggedInUser(), 10000, null)).getFollowers();
+        List<User> followers = FollowerService.getInstance().getFollowers(new FollowerRequest(presenter.getLoggedInUser().getAlias(), 10000, null)).getFollowers();
 
         for (User follower: followers) {
             FeedResponse feedResponse = presenter.getFeed(new FeedRequest(follower, 100000, null));

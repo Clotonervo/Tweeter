@@ -31,14 +31,14 @@ public class ViewUserFollowersTest {
         Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
-        FollowerResponse response = presenter.getFollowers(new FollowerRequest(presenter.getLoggedInUser(), 1000, null));
+        FollowerResponse response = presenter.getFollowers(new FollowerRequest(presenter.getLoggedInUser().getAlias(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
         List<User> followers = response.getFollowers();
         loginService.setCurrentUser(followers.get(0));
 
 
-        response = presenter.getFollowers(new FollowerRequest(presenter.getCurrentUser(), 1000, null));
+        response = presenter.getFollowers(new FollowerRequest(presenter.getCurrentUser().getAlias(), 1000, null));
         Assertions.assertTrue(response.isSuccess());
 
         List<User> followersOtherUser = response.getFollowers();

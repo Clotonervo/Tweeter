@@ -5,6 +5,7 @@ import android.view.View;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.byu.cs.client.model.domain.Follow;
@@ -58,10 +59,15 @@ public class FollowTest {
 
         Assertions.assertNotNull(signedUpUser);
         Assertions.assertTrue(signUpResponse.isSuccess());
+        List<User> following;
 
-
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
-
+        try {
+            following = ServerFacade.getInstance().getFollowees(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null), "/following").getFollowees();
+        }
+        catch (IOException x){
+            x.printStackTrace();
+            return;
+        }
         Assertions.assertEquals(following.size(), 1);
         loginService.setCurrentUser(presenter.getUserByAlias("@TestUser"));
 
@@ -76,7 +82,7 @@ public class FollowTest {
         Assertions.assertEquals(following.size(), 2);
         Assertions.assertEquals(following.get(1), presenter.getCurrentUser());
 
-        FollowerResponse followerResponse = FollowerService.getInstance().getFollowers(new FollowerRequest(presenter.getCurrentUser(), 1000, null));
+        FollowerResponse followerResponse = FollowerService.getInstance().getFollowers(new FollowerRequest(presenter.getCurrentUser().getAlias(), 1000, null));
         Assertions.assertTrue(followerResponse.isSuccess());
         List<User> followers = followerResponse.getFollowers();
 

@@ -75,14 +75,14 @@ public class ServerFacade {
         assert request.getLimit() >= 0;
         assert request.getFollower() != null;
 
-        List<User> allFollowers = userFollowers.get(request.getFollower());
+        List<User> allFollowers = userFollowers.get(aliasToUser(request.getFollower()));
         List<User> responseFollowers = new ArrayList<>(request.getLimit());
 
         boolean hasMorePages = false;
 
         if(request.getLimit() > 0) {
             if (allFollowers != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastFollowee(), allFollowers);
+                int followeesIndex = getFolloweesStartingIndex(aliasToUser(request.getLastFollowee()), allFollowers);
 
                 for(int limitCounter = 0; followeesIndex < allFollowers.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
                     responseFollowers.add(allFollowers.get(followeesIndex));
@@ -99,6 +99,11 @@ public class ServerFacade {
         });
 
         return new FollowerResponse(responseFollowers, hasMorePages);
+    }
+
+    public FollowerResponse getFollowers(FollowerRequest request, String urlPath) throws IOException {
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, request, null, FollowerResponse.class);
     }
 
     /*

@@ -3,6 +3,7 @@ package edu.byu.cs.client.net;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.byu.cs.client.model.domain.Status;
@@ -32,8 +33,14 @@ public class ViewUserStoryTests {
 
         Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
-
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
+        List<User> following;
+        try {
+            following = ServerFacade.getInstance().getFollowees(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null), "/following").getFollowees();
+        }
+        catch (IOException x){
+            x.printStackTrace();
+            return;
+        }
         StoryResponse response = presenter.getStory(new StoryRequest(presenter.getLoggedInUser(), 10, null));
         Assertions.assertFalse(response.isError());
         List<Status> storyUserLoggedIn = response.getStatusList();

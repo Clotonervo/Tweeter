@@ -5,6 +5,7 @@ import android.view.View;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.byu.cs.client.model.domain.Follow;
@@ -55,26 +56,31 @@ public class UnfollowTest {
         Assertions.assertTrue(loginResponse.isSuccess());
         Assertions.assertEquals(presenter.getCurrentUser().getAlias(), loginRequest.getUsername());
 
+        try {
+            List<User> following = ServerFacade.getInstance().getFollowees(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null), "/following").getFollowees();
+            int size = following.size();
+            User userToUnfollow = presenter.getUserByAlias(following.get(0).getAlias());
 
-        List<User> following = ServerFacade.getInstance().getFollowing(new FollowingRequest(presenter.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
-        int size = following.size();
-        User userToUnfollow = presenter.getUserByAlias(following.get(0).getAlias());
+            Assertions.assertNotEquals(following.size(), 0);
 
-        Assertions.assertNotEquals(following.size(), 0);
+            loginService.setCurrentUser(userToUnfollow);
 
-        loginService.setCurrentUser(userToUnfollow);
+            response = presenter.unFollowUser(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
 
-        response = presenter.unFollowUser(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+            Assertions.assertTrue(response.isSuccess());
+            following = ServerFacade.getInstance().getFollowees(new FollowingRequest(loginService.getLoggedInUser().getAlias(), 1000, null), "/following").getFollowees();
 
-        Assertions.assertTrue(response.isSuccess());
-        following = ServerFacade.getInstance().getFollowing(new FollowingRequest(loginService.getLoggedInUser().getAlias(), 1000, null)).getFollowees();
+            Assertions.assertEquals(following.size(), size - 1);
+            Assertions.assertNotEquals(following.get(0), presenter.getCurrentUser());
 
-        Assertions.assertEquals(following.size(), size - 1);
-        Assertions.assertNotEquals(following.get(0), presenter.getCurrentUser());
+            List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(presenter.getCurrentUser().getAlias(), 1000, null)).getFollowers();
 
-        List<User> followers = ServerFacade.getInstance().getFollowers(new FollowerRequest(presenter.getCurrentUser(), 1000, null)).getFollowers();
-
-        Assertions.assertFalse(followers.contains(presenter.getLoggedInUser()));
+            Assertions.assertFalse(followers.contains(presenter.getLoggedInUser()));
+        }
+        catch (IOException x){
+            x.printStackTrace();
+            return;
+        }
 
     }
 

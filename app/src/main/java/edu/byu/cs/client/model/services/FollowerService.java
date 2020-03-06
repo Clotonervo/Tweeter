@@ -1,5 +1,7 @@
 package edu.byu.cs.client.model.services;
 
+import java.io.IOException;
+
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.FollowerRequest;
 import edu.byu.cs.client.net.response.FollowerResponse;
@@ -7,6 +9,7 @@ import edu.byu.cs.client.net.response.FollowerResponse;
 public class FollowerService {
 
     private static FollowerService instance;
+    private static final String URL_PATH = "/followers";
 
     private final ServerFacade serverFacade;
 
@@ -23,7 +26,12 @@ public class FollowerService {
     }
 
     public FollowerResponse getFollowers(FollowerRequest request) {
-        return serverFacade.getFollowers(request);
+        try {
+            return serverFacade.getFollowers(request, URL_PATH);
+        }
+        catch (IOException x){
+            return new FollowerResponse(x.getMessage());
+        }
     }
 }
 
