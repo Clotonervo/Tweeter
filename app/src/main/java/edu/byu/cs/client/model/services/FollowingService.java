@@ -14,6 +14,8 @@ public class FollowingService {
     private static FollowingService instance;
     private static final String URL_PATH1 = "/following";
     private static final String URL_PATH2 = "/unfollowuser";
+    private static final String URL_PATH3 = "/followuser";
+    private static final String URL_PATH4 = "/isfollowing";
     private final ServerFacade serverFacade;
 
     public static FollowingService getInstance() {
@@ -47,7 +49,12 @@ public class FollowingService {
     }
 
     public FollowResponse followUser(Follow follow){
-        return serverFacade.followUser(follow);
+        try{
+            return serverFacade.followUser(follow, URL_PATH2);
+        }
+        catch (IOException x){
+            return new FollowResponse(false, "IOException caught, something went wrong");
+        }
     }
 
     public boolean isFollowing(Follow follow){

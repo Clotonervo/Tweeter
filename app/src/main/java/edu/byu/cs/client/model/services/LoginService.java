@@ -7,6 +7,7 @@ import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.LoginRequest;
 import edu.byu.cs.client.net.response.LoginResponse;
+import edu.byu.cs.client.net.response.SignOutResponse;
 
 public class LoginService {
 
@@ -15,6 +16,7 @@ public class LoginService {
     private User currentUser;
     private User loggedInUser;
     private static final String URL_PATH = "/login";
+    private static final String URL_PATH2 = "/signout";
 
 
     public static LoginService getInstance() {
@@ -62,10 +64,16 @@ public class LoginService {
         }
     }
 
-    public void signOutUser(){
-        setCurrentUser(null);
-        setLoggedInUser(null);
-        serverFacade.signOutUser();
+    public SignOutResponse signOutUser(){
+        try {
+            SignOutResponse response = serverFacade.signOutUser(loggedInUser.getAlias(), URL_PATH2);
+            setCurrentUser(null);
+            setLoggedInUser(null);
+            return response;
+        }
+        catch (IOException x){
+            return new SignOutResponse(false, x.getMessage());
+        }
     }
 
     public User aliasToUser(String alias){

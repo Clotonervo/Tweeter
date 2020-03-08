@@ -35,7 +35,7 @@ public class LoginInTests {
         }
     }
 
-    private LoginPresenter presenter = new LoginPresenter(new ViewImplementation()); //TODO: Check this
+    private LoginPresenter presenter = new LoginPresenter(new ViewImplementation());
 
 
 

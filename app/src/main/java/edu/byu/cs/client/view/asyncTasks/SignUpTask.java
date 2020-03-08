@@ -38,10 +38,10 @@ public class SignUpTask extends AsyncTask<SignUpRequest, Void, SignUpResponse> {
         if(signUpResponse.isSuccess()){
             LoginService.getInstance().setLoggedInUser(signUpResponse.getUser());
             LoginService.getInstance().setCurrentUser(signUpResponse.getUser());
-            observer.signUpError(signUpResponse.getMessage());
+            observer.signUpSuccess(signUpResponse.getMessage());
         }
         else {
-            observer.signUpSuccess(signUpResponse.getMessage());
+            observer.signUpError(signUpResponse.getMessage());
         }
     }
 }

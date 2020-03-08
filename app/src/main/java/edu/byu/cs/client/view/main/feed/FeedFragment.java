@@ -104,7 +104,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
             //--------------- User mentions
             ClickableSpan userMentionsSpan = new ClickableSpan() {
                 @Override
-                public void onClick(View textView) {        //TODO: CHANGE SERVER FACADE TO ONLY DO SO MANY STATUSES
+                public void onClick(View textView) {        
                     TextView tx = (TextView) textView;
                     String s = tx.getText().toString();
                     User newUser = presenter.getUserByAlias(tx.getText().toString());

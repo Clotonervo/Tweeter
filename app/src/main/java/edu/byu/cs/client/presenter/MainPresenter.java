@@ -26,8 +26,7 @@ public class MainPresenter extends Presenter {
     }
 
     public SignOutResponse signOut(){
-        LoginService.getInstance().signOutUser();
-        return new SignOutResponse(true, "Logged out!");
+        return LoginService.getInstance().signOutUser();
     }
 
     public boolean isFollowing(Follow follow){
