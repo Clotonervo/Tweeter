@@ -1,5 +1,7 @@
 package edu.byu.cs.client.model.services;
 
+import java.io.IOException;
+
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.FeedRequest;
 import edu.byu.cs.client.net.response.FeedResponse;
@@ -8,6 +10,8 @@ public class FeedService {
 
     private static FeedService instance;
     private final ServerFacade serverFacade;
+    private static final String URL_PATH = "/feed";
+
 
 
     public static FeedService getInstance() {
@@ -21,9 +25,13 @@ public class FeedService {
     private FeedService() { serverFacade = ServerFacade.getInstance(); }
 
     public FeedResponse getFeed(FeedRequest feedRequest) {
-        ServerFacade server = ServerFacade.getInstance();
-        FeedResponse feedResponse = server.getFeed(feedRequest);
-        return feedResponse;
+        try {
+            FeedResponse response = serverFacade.getFeed(feedRequest, URL_PATH);
+            return response;
+        }
+        catch (IOException x){
+            return new FeedResponse(x.getMessage());
+        }
     }
 
 }

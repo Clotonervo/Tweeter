@@ -1,5 +1,8 @@
 package edu.byu.cs.client.model.services;
 
+import java.io.IOException;
+import java.net.URL;
+
 import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.LoginRequest;
@@ -11,6 +14,8 @@ public class LoginService {
     private final ServerFacade serverFacade;
     private User currentUser;
     private User loggedInUser;
+    private static final String URL_PATH = "/login";
+
 
     public static LoginService getInstance() {
         if(instance == null) {
@@ -39,15 +44,21 @@ public class LoginService {
     }
 
     public LoginResponse authenticateUser(LoginRequest loginRequest){
-        LoginResponse loginResponse = serverFacade.authenticateUser(loginRequest);
-        if (!loginResponse.isSuccess()){
-            return loginResponse;
+        try {
+            LoginResponse loginResponse = serverFacade.authenticateUser(loginRequest, URL_PATH);
+
+            if (!loginResponse.isSuccess()){
+                return loginResponse;
+            }
+            else {
+                currentUser = loginResponse.getUser();
+                setCurrentUser(currentUser);
+                setLoggedInUser(currentUser);
+                return loginResponse;
+            }
         }
-        else {
-            currentUser = loginResponse.getUser();
-            setCurrentUser(currentUser);
-            setLoggedInUser(currentUser);
-            return loginResponse;
+        catch(IOException x){
+            return new LoginResponse(x.getMessage());
         }
     }
 

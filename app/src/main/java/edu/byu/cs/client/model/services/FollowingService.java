@@ -12,7 +12,8 @@ import edu.byu.cs.client.net.response.UnfollowResponse;
 public class FollowingService {
 
     private static FollowingService instance;
-    private static final String URL_PATH = "/following";
+    private static final String URL_PATH1 = "/following";
+    private static final String URL_PATH2 = "/unfollowuser";
     private final ServerFacade serverFacade;
 
     public static FollowingService getInstance() {
@@ -29,7 +30,7 @@ public class FollowingService {
 
     public FollowingResponse getFollowees(FollowingRequest request) {
         try{
-            return serverFacade.getFollowees(request, URL_PATH);
+            return serverFacade.getFollowees(request, URL_PATH1);
         }
         catch (IOException x){
             return new FollowingResponse("IOException caught, something went wrong");
@@ -37,7 +38,12 @@ public class FollowingService {
     }
 
     public UnfollowResponse unfollowUser(Follow follow){
-        return serverFacade.unfollowUser(follow);
+        try{
+            return serverFacade.unfollowUser(follow, URL_PATH2);
+        }
+        catch (IOException x){
+            return new UnfollowResponse("IOException caught, something went wrong");
+        }
     }
 
     public FollowResponse followUser(Follow follow){

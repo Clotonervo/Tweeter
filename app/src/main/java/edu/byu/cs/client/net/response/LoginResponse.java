@@ -2,38 +2,26 @@ package edu.byu.cs.client.net.response;
 
 import edu.byu.cs.client.model.domain.User;
 
-public class LoginResponse {
+public class LoginResponse extends Response{
 
-    private String message;
-    private boolean success;
     private User user;
 
     public LoginResponse(String message) {
-        this.message = message;
-        this.success = false;
+        super(false, message);
         this.user = null;
     }
 
-    public LoginResponse(String message, boolean success, User user){
-        this.message = message;
-        this.success = success;
+    public LoginResponse(User user){
+        super(true, null);
         this.user = user;
     }
 
     public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+        return super.getMessage();
     }
 
     public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
+        return super.isSuccess();
     }
 
     public User getUser()

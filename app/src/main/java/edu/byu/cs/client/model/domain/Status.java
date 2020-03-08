@@ -9,7 +9,7 @@ public class Status {
     private final String message;
     private final List<String> userMentions;
     private final List<String> links;
-    private final Timestamp timeStamp;
+    private final long timeStamp;
 
     public Status(User user, String message) {
         this.user = user;
@@ -18,7 +18,7 @@ public class Status {
         this.links = new ArrayList<>();
         findUserMentions();
         findLinks();
-        this.timeStamp = new Timestamp(System.currentTimeMillis());
+        this.timeStamp = new Timestamp(System.currentTimeMillis()).getTime();
     }
 
     public User getUser() {
@@ -29,7 +29,7 @@ public class Status {
         return message;
     }
 
-    public Timestamp getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 

@@ -1,28 +1,29 @@
 package edu.byu.cs.client.net.response;
 
-public class SignUpResponse {
+import edu.byu.cs.client.model.domain.User;
 
-    private String message;
-    private boolean success;
+public class SignUpResponse extends Response{
 
-    public SignUpResponse(String message, boolean success) {
-        this.message = message;
-        this.success = success;
+    private User signedInUser;
+
+    public SignUpResponse(String message) {
+        super(false,message);
+    }
+
+    public SignUpResponse(User signedInUser){
+        super(false, null);
+        this.signedInUser = signedInUser;
     }
 
     public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+        return super.getMessage();
     }
 
     public boolean isSuccess() {
-        return success;
+        return super.isSuccess();
     }
 
-    public void setError(boolean success) {
-        this.success = success;
+    public User getUser() {
+        return signedInUser;
     }
 }

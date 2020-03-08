@@ -25,7 +25,8 @@ public class SignUpPresenter extends Presenter {
     }
 
     public SignUpResponse signUpUser(SignUpRequest signUpRequest){
-        SignUpResponse signUpResponse = SignUpService.getInstance().authenticateUser(signUpRequest);
+        SignUpService service = SignUpService.getInstance();
+        SignUpResponse signUpResponse = service.authenticateUser(signUpRequest);
         return signUpResponse;
     }
 

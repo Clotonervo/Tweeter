@@ -2,14 +2,14 @@ package edu.byu.cs.client.net.response;
 
 public class UnfollowResponse extends Response {
 
-    public UnfollowResponse(boolean success)
+    public UnfollowResponse()
     {
-        super(success);
+        super(true);
     }
 
-    public UnfollowResponse(boolean success, String message)
+    public UnfollowResponse(String message)
     {
-        super(success, message);
+        super(false, message);
     }
 
     @Override

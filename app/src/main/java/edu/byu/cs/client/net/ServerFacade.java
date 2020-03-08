@@ -58,12 +58,12 @@ public class ServerFacade {
     }
 
     private ServerFacade(){
-        intializeFollowData();
-        initializeStatuses();
-        initializeFeeds();
-        allUsers = new ArrayList<>();
-        allUsers.add(new User("Test", "User",
-                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"));
+//        intializeFollowData();
+//        initializeStatuses();
+//        initializeFeeds();
+//        allUsers = new ArrayList<>();
+//        allUsers.add(new User("Test", "User",
+//                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"));
     }
 
 
@@ -205,18 +205,28 @@ public class ServerFacade {
         return FollowGenerator.getInstance();
     }
 
-    public LoginResponse authenticateUser(LoginRequest loginRequest){                   //When backend is up, authenticate password with username there
+//    public LoginResponse authenticateUser(LoginRequest loginRequest){                   //When backend is up, authenticate password with username there
+//
+//        for(int i = 0; i < allUsers.size(); i++){
+//            if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
+//            && (loginRequest.getPassword().equals("password")
+//            || loginRequest.getPassword().equals("x"))){
+//                return new LoginResponse("Login successful!", true, allUsers.get(i));
+//            }
+//        }
+//        return new LoginResponse("Invalid credentials");
+//
+//    }
 
-        for(int i = 0; i < allUsers.size(); i++){
-            if(loginRequest.getUsername().equals(allUsers.get(i).getAlias())
-            && (loginRequest.getPassword().equals("password")
-            || loginRequest.getPassword().equals("x"))){
-                return new LoginResponse("Login successful!", true, allUsers.get(i));
-            }
+        /*
+             --------------------- Login User
+
+  */
+        public LoginResponse authenticateUser(LoginRequest request, String urlPath) throws IOException {
+            ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+            return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
         }
-        return new LoginResponse("Invalid credentials");
 
-    }
 
     /*
              --------------------- Initialize Statuses
@@ -261,60 +271,70 @@ public class ServerFacade {
                 --------------------- Sign Up User
 
      */
-    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
+//    public SignUpResponse registerNewUser(SignUpRequest signUpRequest){
+//
+//        if(signUpRequest.getFirstName() == null || signUpRequest.getLastName() == null
+//                || signUpRequest.getPassword() == null || signUpRequest.getUsername() == null){
+//            return new SignUpResponse("Not all forms filled out!", false);
+//        }
+//
+//
+//        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
+//                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
+//
+//        for (User user: allUsers) {
+//            if(user.getAlias().equals(signedUpUser.getAlias())){
+//                return new SignUpResponse("Username already exists!", false);
+//            }
+//        }
+//
+//        LoginService.getInstance().setCurrentUser(signedUpUser);
+//        LoginService.getInstance().setLoggedInUser(signedUpUser);
+//        List<User> newUserFollowees = new ArrayList<>();
+//        List<User> newUserFollowers = new ArrayList<>();
+//
+//
+//        newUserFollowees.add(tweeterBot);           //Two different arrays because if one gets altered the other would too
+//        newUserFollowers.add(tweeterBot);
+//
+//
+//        userFollowing.put(signedUpUser,newUserFollowees);           //Have new user follow tweeterbot
+//        userFollowing.get(tweeterBot).add(signedUpUser);
+//
+//        userFollowers.get(tweeterBot).add(signedUpUser);            //Have tweeterBot follow new person
+//        userFollowers.put(signedUpUser, newUserFollowers);
+//
+//        Status status = new Status(tweeterBot,"Welcome to Tweeter!");
+//        List<Status> currentFeed = new ArrayList<>();
+//        currentFeed.add(status);
+//
+//        userStatuses.get(tweeterBot).add(status);
+//        userFeeds.put(signedUpUser, currentFeed);
+//
+//        List<Status> newStatusList = new ArrayList<>();
+//        newStatusList.add(new Status(signedUpUser, "My first Status! Hi everybody!"));
+//        userStatuses.put(signedUpUser, newStatusList);
+//
+//        allUsers.add(signedUpUser);
+//
+//
+//        return new SignUpResponse("Signed up successfully!", true);
+//    }
 
-        if(signUpRequest.getFirstName() == null || signUpRequest.getLastName() == null
-                || signUpRequest.getPassword() == null || signUpRequest.getUsername() == null){
-            return new SignUpResponse("Not all forms filled out!", false);
-        }
-
-
-        User signedUpUser = new User(signUpRequest.getFirstName(), signUpRequest.getLastName(), signUpRequest.getUsername(),
-                "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png");
-
-        for (User user: allUsers) {
-            if(user.getAlias().equals(signedUpUser.getAlias())){
-                return new SignUpResponse("Username already exists!", false);
-            }
-        }
-
-        LoginService.getInstance().setCurrentUser(signedUpUser);
-        LoginService.getInstance().setLoggedInUser(signedUpUser);
-        List<User> newUserFollowees = new ArrayList<>();
-        List<User> newUserFollowers = new ArrayList<>();
-
-
-        newUserFollowees.add(tweeterBot);           //Two different arrays because if one gets altered the other would too
-        newUserFollowers.add(tweeterBot);
-
-
-        userFollowing.put(signedUpUser,newUserFollowees);           //Have new user follow tweeterbot
-        userFollowing.get(tweeterBot).add(signedUpUser);
-
-        userFollowers.get(tweeterBot).add(signedUpUser);            //Have tweeterBot follow new person
-        userFollowers.put(signedUpUser, newUserFollowers);
-
-        Status status = new Status(tweeterBot,"Welcome to Tweeter!");
-        List<Status> currentFeed = new ArrayList<>();
-        currentFeed.add(status);
-
-        userStatuses.get(tweeterBot).add(status);
-        userFeeds.put(signedUpUser, currentFeed);
-
-        List<Status> newStatusList = new ArrayList<>();
-        newStatusList.add(new Status(signedUpUser, "My first Status! Hi everybody!"));
-        userStatuses.put(signedUpUser, newStatusList);
-
-        allUsers.add(signedUpUser);
-
-
-        return new SignUpResponse("Signed up successfully!", true);
+    public SignUpResponse registerNewUser(SignUpRequest signUpRequest, String urlPath) throws IOException{
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, signUpRequest, null, SignUpResponse.class);
     }
 
     /*
              --------------------- Get Story
 
   */
+    public StoryResponse getStory(StoryRequest storyRequest, String urlPath) throws IOException {
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, storyRequest, null, StoryResponse.class);
+    }
+
     public StoryResponse getStory(StoryRequest storyRequest){
         User user = storyRequest.getUser();
 
@@ -340,7 +360,7 @@ public class ServerFacade {
         }
 
 
-        return new StoryResponse("Good stuff", responseStatuses, hasMorePages, true);
+        return new StoryResponse(responseStatuses, hasMorePages);
     }
 
     private int getStoryStartingIndex(Status lastStatus, List<Status> allStatuses) {
@@ -366,44 +386,50 @@ public class ServerFacade {
              --------------------- Get Feed
 
   */
-    public FeedResponse getFeed(FeedRequest feedRequest){
-        User user = feedRequest.getUser();
 
-        assert feedRequest.getLimit() >= 0;
-        assert feedRequest.getUser() != null;
-
-        boolean hasMorePages = false;
-
-        List<Status> statusList = userFeeds.get(user);
-        List<User> following = userFollowing.get(user);
-
-        List<Status> feedResponse = new ArrayList<>();
-
-        if(feedRequest.getLimit() > 0) {
-            if (statusList != null) {
-                int storyIndex = getFeedStartingIndex(feedRequest.getLastStatus(), statusList);
-
-                for(int limitCounter = 0; storyIndex < statusList.size() && limitCounter < feedRequest.getLimit(); storyIndex++, limitCounter++) {
-                    feedResponse.add(statusList.get(storyIndex));
-                }
-
-                hasMorePages = storyIndex < statusList.size();
-            }
-        }
-
-
-        Collections.sort(feedResponse, new Comparator<Status>() {
-            public int compare(Status o1, Status o2) {
-                return o2.getTimeStamp().compareTo(o1.getTimeStamp());
-            }
-        });
-
-
-
-
-        return new FeedResponse(true, "No Error", hasMorePages, feedResponse, following);
-
+    public FeedResponse getFeed(FeedRequest feedRequest, String urlPath) throws IOException {
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, feedRequest, null, FeedResponse.class);
     }
+
+//    public FeedResponse getFeed(FeedRequest feedRequest){
+//        User user = feedRequest.getUser();
+//
+//        assert feedRequest.getLimit() >= 0;
+//        assert feedRequest.getUser() != null;
+//
+//        boolean hasMorePages = false;
+//
+//        List<Status> statusList = userFeeds.get(user);
+//        List<User> following = userFollowing.get(user);
+//
+//        List<Status> feedResponse = new ArrayList<>();
+//
+//        if(feedRequest.getLimit() > 0) {
+//            if (statusList != null) {
+//                int storyIndex = getFeedStartingIndex(feedRequest.getLastStatus(), statusList);
+//
+//                for(int limitCounter = 0; storyIndex < statusList.size() && limitCounter < feedRequest.getLimit(); storyIndex++, limitCounter++) {
+//                    feedResponse.add(statusList.get(storyIndex));
+//                }
+//
+//                hasMorePages = storyIndex < statusList.size();
+//            }
+//        }
+//
+//
+//        Collections.sort(feedResponse, new Comparator<Status>() {
+//            public int compare(Status o1, Status o2) {
+//                return o2.getTimeStamp() o1.getTimeStamp());
+//            }
+//        });
+//
+//
+//
+//
+//        return new FeedResponse(true, "No Error", hasMorePages, feedResponse, following);
+//
+//    }
 
 
     private int getFeedStartingIndex(Status lastStatus, List<Status> allStatuses) {
@@ -437,7 +463,7 @@ public class ServerFacade {
 
         Collections.sort(userStatuses.get(user), new Comparator<Status>() {
             public int compare(Status o1, Status o2) {
-                return o2.getTimeStamp().compareTo(o1.getTimeStamp());
+                return Long.compare(o1.getTimeStamp(), o2.getTimeStamp());
             }
         });
 
@@ -495,32 +521,37 @@ public class ServerFacade {
              --------------------- unfollowUser
 
   */
-    public UnfollowResponse unfollowUser(Follow follow){
+//    public UnfollowResponse unfollowUser(Follow follow){
+//
+//        if (userFollowing.get(follow.getFollower()).remove(follow.getFollowee())
+//            && userFollowers.get(follow.getFollowee()).remove(follow.getFollower())){
+//
+//            List<Status> statusList = new ArrayList<>(userFeeds.get(follow.getFollower()));
+//
+//            Iterator<Status> itr = statusList.iterator();
+//
+//            while (itr.hasNext()) {
+//                Status status = itr.next();
+//
+//                if (status.getUser() == follow.getFollowee()) {
+//                    itr.remove();
+//                }
+//            }
+//
+//
+//            userFeeds.remove(follow.getFollower());
+//            userFeeds.put(follow.getFollower(), statusList);
+//
+//            return new UnfollowResponse(true, "User successfully unfollowed");
+//        }
+//        else{
+//            return new UnfollowResponse(false, "Something went wrong unfollowing user");
+//        }
+//    }
 
-        if (userFollowing.get(follow.getFollower()).remove(follow.getFollowee())
-            && userFollowers.get(follow.getFollowee()).remove(follow.getFollower())){
-
-            List<Status> statusList = new ArrayList<>(userFeeds.get(follow.getFollower()));
-
-            Iterator<Status> itr = statusList.iterator();
-
-            while (itr.hasNext()) {
-                Status status = itr.next();
-
-                if (status.getUser() == follow.getFollowee()) {
-                    itr.remove();
-                }
-            }
-
-
-            userFeeds.remove(follow.getFollower());
-            userFeeds.put(follow.getFollower(), statusList);
-
-            return new UnfollowResponse(true, "User successfully unfollowed");
-        }
-        else{
-            return new UnfollowResponse(false, "Something went wrong unfollowing user");
-        }
+    public UnfollowResponse unfollowUser(Follow follow, String urlPath) throws IOException{
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, follow, null, UnfollowResponse.class);
     }
 
     /*
