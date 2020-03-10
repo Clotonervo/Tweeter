@@ -30,7 +30,9 @@ public class GetFollowingTask extends AsyncTask<FollowingRequest, Void, Followin
     @Override
     protected FollowingResponse doInBackground(FollowingRequest... followingRequests) {
         FollowingResponse response = presenter.getFollowing(followingRequests[0]);
-        loadImages(response);
+        if(response.isSuccess()) {
+            loadImages(response);
+        }
         return response;
     }
 
