@@ -8,6 +8,7 @@ import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.LoginRequest;
 import edu.byu.cs.client.net.response.LoginResponse;
 import edu.byu.cs.client.net.response.SignOutResponse;
+import edu.byu.cs.client.net.response.UserAliasResponse;
 
 public class LoginService {
 
@@ -17,6 +18,7 @@ public class LoginService {
     private User loggedInUser;
     private static final String URL_PATH = "/login";
     private static final String URL_PATH2 = "/signout";
+    private static final String URL_PATH3 = "/aliastouser";
 
 
     public static LoginService getInstance() {
@@ -56,6 +58,7 @@ public class LoginService {
                 currentUser = loginResponse.getUser();
                 setCurrentUser(currentUser);
                 setLoggedInUser(currentUser);
+//                serverFacade.setAuthToken(loginResponse.getAuthToken());
                 return loginResponse;
             }
         }
@@ -69,6 +72,7 @@ public class LoginService {
             SignOutResponse response = serverFacade.signOutUser(loggedInUser.getAlias(), URL_PATH2);
             setCurrentUser(null);
             setLoggedInUser(null);
+//            serverFacade.setAuthToken(null);
             return response;
         }
         catch (IOException x){
@@ -76,7 +80,12 @@ public class LoginService {
         }
     }
 
-    public User aliasToUser(String alias){
-        return serverFacade.aliasToUser(alias);
+    public UserAliasResponse aliasToUser(String alias) {
+        try {
+            return serverFacade.aliasToUser(alias, URL_PATH3);
+        }
+        catch (IOException x){
+            return null;
+        }
     }
 }

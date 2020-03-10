@@ -23,12 +23,14 @@ import edu.byu.cs.client.net.response.FeedResponse;
 import edu.byu.cs.client.net.response.FollowResponse;
 import edu.byu.cs.client.net.response.FollowerResponse;
 import edu.byu.cs.client.net.response.FollowingResponse;
+import edu.byu.cs.client.net.response.IsFollowingResponse;
 import edu.byu.cs.client.net.response.LoginResponse;
 import edu.byu.cs.client.net.response.PostResponse;
 import edu.byu.cs.client.net.response.SignOutResponse;
 import edu.byu.cs.client.net.response.SignUpResponse;
 import edu.byu.cs.client.net.response.StoryResponse;
 import edu.byu.cs.client.net.response.UnfollowResponse;
+import edu.byu.cs.client.net.response.UserAliasResponse;
 
 public class ServerFacade {
 
@@ -44,6 +46,7 @@ public class ServerFacade {
     private static List<User> allUsers;
 
     private static final String SERVER_URL = "https://myy7ktcr13.execute-api.us-east-2.amazonaws.com/Beta";
+    private String authToken;
 
 
 
@@ -56,6 +59,10 @@ public class ServerFacade {
         }
 
         return instance;
+    }
+
+    public void setAuthToken(String authToken){
+        this.authToken = authToken;
     }
 
     private ServerFacade(){
@@ -103,6 +110,7 @@ public class ServerFacade {
 //    }
 
     public FollowerResponse getFollowers(FollowerRequest request, String urlPath) throws IOException {
+//        request.setAuthToken(authToken);
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
         return clientCommunicator.doPost(urlPath, request, null, FollowerResponse.class);
     }
@@ -122,6 +130,7 @@ public class ServerFacade {
      */
     public FollowingResponse getFollowees(FollowingRequest request, String urlPath) throws IOException
     {
+//        request.setAuthToken(authToken);
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
         return clientCommunicator.doPost(urlPath, request, null, FollowingResponse.class);
     }
@@ -322,18 +331,20 @@ public class ServerFacade {
 //        return new SignUpResponse("Signed up successfully!", true);
 //    }
 
-    public SignUpResponse registerNewUser(SignUpRequest signUpRequest, String urlPath) throws IOException{
+    public SignUpResponse registerNewUser(SignUpRequest request, String urlPath) throws IOException{
+//        request.setAuthToken(authToken);
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, signUpRequest, null, SignUpResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, SignUpResponse.class);
     }
 
     /*
              --------------------- Get Story
 
   */
-    public StoryResponse getStory(StoryRequest storyRequest, String urlPath) throws IOException {
+    public StoryResponse getStory(StoryRequest request, String urlPath) throws IOException {
+//        request.setAuthToken(authToken);
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, storyRequest, null, StoryResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, StoryResponse.class);
     }
 
 //    public StoryResponse getStory(StoryRequest storyRequest){
@@ -388,9 +399,10 @@ public class ServerFacade {
 
   */
 
-    public FeedResponse getFeed(FeedRequest feedRequest, String urlPath) throws IOException {
+    public FeedResponse getFeed(FeedRequest request, String urlPath) throws IOException {
+//        request.setAuthToken(authToken);
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, feedRequest, null, FeedResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, FeedResponse.class);
     }
 
 //    public FeedResponse getFeed(FeedRequest feedRequest){
@@ -501,12 +513,23 @@ public class ServerFacade {
         return null;
     }
 
+    public UserAliasResponse aliasToUser(String alias, String urlPath) throws IOException {
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        return clientCommunicator.doPost(urlPath, alias, null, UserAliasResponse.class);
+    }
+
     /*
              --------------------- isFollowing
 
   */
     public boolean isFollowing(Follow follow){                                          //TODO: Implement this API
         return userFollowing.get(follow.getFollower()).contains(follow.getFollowee());
+    }
+
+    public IsFollowingResponse isFollowing(Follow follow, String urlPath) throws IOException {
+        ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
+        IsFollowingResponse isFollowingResponse = clientCommunicator.doPost(urlPath, follow, null, IsFollowingResponse.class);
+        return isFollowingResponse;
     }
 
     /*

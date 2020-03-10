@@ -5,6 +5,7 @@ import edu.byu.cs.client.model.domain.User;
 public class LoginResponse extends Response{
 
     private User user;
+    private String authToken;
 
     public LoginResponse(String message) {
         super(false, message);
@@ -32,5 +33,13 @@ public class LoginResponse extends Response{
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    public String getAuthToken(){
+        return this.authToken;
+    }
+
+    public void setAuthToken(String authToken){
+        this.authToken = authToken;
     }
 }

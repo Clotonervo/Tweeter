@@ -31,6 +31,7 @@ import edu.byu.cs.client.net.request.StoryRequest;
 import edu.byu.cs.client.net.response.StoryResponse;
 import edu.byu.cs.client.presenter.StoryPresenter;
 import edu.byu.cs.client.view.asyncTasks.GetStoryTask;
+import edu.byu.cs.client.view.asyncTasks.UserAliasTask;
 import edu.byu.cs.client.view.cache.ImageCache;
 import edu.byu.cs.client.view.main.MainActivity;
 
@@ -64,7 +65,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
     }
 
 
-    private class StatusHolder extends RecyclerView.ViewHolder {
+    private class StatusHolder extends RecyclerView.ViewHolder implements UserAliasTask.UserAliasObserver {
 
         private final ImageView userImage;
         private final TextView userAlias;
@@ -78,7 +79,6 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
             message = itemView.findViewById(R.id.message);
-
         }
 
         void bindUser(Status status) {
@@ -90,22 +90,16 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             String messageCopy = message.getText().toString();
             SpannableString ss = new SpannableString(messageCopy);
 
+            final StatusHolder instance = this;
+
             //--------------- User mentions
             ClickableSpan userMentionsSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View textView) {
                     TextView tx = (TextView) textView;
                     String s = tx.getText().toString();
-                    User newUser = presenter.getUserByAlias(tx.getText().toString());
-                    if(newUser != null){
-                        presenter.setCurrentUser(newUser);
-
-                        Intent intent = new Intent(textView.getContext(), MainActivity.class);
-                        itemView.getContext().startActivity(intent);
-                    }
-                    else {
-                        Toast.makeText(getContext(), tx.getText().toString() + " does not exist!", Toast.LENGTH_SHORT).show();
-                    }
+                    UserAliasTask userAliasTask = new UserAliasTask(instance, presenter);
+                    userAliasTask.execute(tx.getText().toString());
                 }
             };
 
@@ -145,6 +139,26 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             message.setText(ss);
             message.setMovementMethod(LinkMovementMethod.getInstance());
             message.setHighlightColor(Color.BLUE);
+        }
+
+        @Override
+        public void userSuccess(User user)
+        {
+            if(user != null){
+                presenter.setCurrentUser(user);
+
+                Intent intent = new Intent(itemView.getContext(), MainActivity.class);
+                itemView.getContext().startActivity(intent);
+            }
+            else {
+                Toast.makeText(getContext(), "That user does not exist!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void userError(String error)
+        {
+            Toast.makeText(getContext(), "Something went wrong when getting the user!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -223,6 +237,11 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         @Override
         public void storyRetrieved(StoryResponse storyResponse) {
             List<Status> statusList = storyResponse.getStatusList();
+
+            if(!storyResponse.isSuccess()){
+                Toast.makeText(getContext(), "Error retrieving story", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             lastStatus = (statusList.size() > 0) ? statusList.get(statusList.size() -1) : null;
             hasMorePages = storyResponse.hasMorePages();

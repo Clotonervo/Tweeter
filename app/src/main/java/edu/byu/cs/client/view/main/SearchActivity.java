@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import edu.byu.cs.client.R;
 import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.presenter.SearchPresenter;
+import edu.byu.cs.client.view.asyncTasks.UserAliasTask;
 
-public class SearchActivity extends AppCompatActivity implements SearchPresenter.View {
+public class SearchActivity extends AppCompatActivity implements SearchPresenter.View, UserAliasTask.UserAliasObserver {
 
     private Button searchButton;
     private EditText searchUser;
     private SearchPresenter presenter;
+    private SearchActivity instance = this;
 
 
     @Override
@@ -35,19 +37,30 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             public void onClick(View view)
             {
                 String userAlias = searchUser.getText().toString();
-                User newUser = presenter.getUserByAlias(userAlias);
-                if(newUser != null){
-                    presenter.setCurrentUser(newUser);
-
-                    Intent intent = new Intent(view.getContext(), MainActivity.class);
-                    startActivity(intent);
-                }
-                else {
-                    Toast.makeText(view.getContext(), userAlias + " does not exist!", Toast.LENGTH_SHORT).show();
-                }
+                UserAliasTask userAliasTask = new UserAliasTask(instance, presenter);
+                userAliasTask.execute(userAlias);
             }
         });
 
     }
 
+    @Override
+    public void userSuccess(User user)
+    {
+        if(user != null){
+            presenter.setCurrentUser(user);
+
+            Intent intent = new Intent(this, MainActivity.class);
+            this.startActivity(intent);
+        }
+        else {
+            Toast.makeText(this, "That user does not exist!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void userError(String error)
+    {
+        Toast.makeText(this, "Something went wrong when getting the user!", Toast.LENGTH_SHORT).show();
+    }
 }

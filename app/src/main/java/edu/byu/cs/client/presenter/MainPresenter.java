@@ -4,6 +4,7 @@ import edu.byu.cs.client.model.domain.Follow;
 import edu.byu.cs.client.model.services.FollowingService;
 import edu.byu.cs.client.model.services.LoginService;
 import edu.byu.cs.client.net.response.FollowResponse;
+import edu.byu.cs.client.net.response.IsFollowingResponse;
 import edu.byu.cs.client.net.response.SignOutResponse;
 import edu.byu.cs.client.net.response.UnfollowResponse;
 
@@ -29,7 +30,7 @@ public class MainPresenter extends Presenter {
         return LoginService.getInstance().signOutUser();
     }
 
-    public boolean isFollowing(Follow follow){
+    public IsFollowingResponse isFollowing(Follow follow){
         return FollowingService.getInstance().isFollowing(follow);
     }
 

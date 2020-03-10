@@ -28,7 +28,9 @@ public class GetStoryTask extends AsyncTask<StoryRequest, Void, StoryResponse> {
     @Override
     protected StoryResponse doInBackground(StoryRequest... storyRequests) {
         StoryResponse response = presenter.getStory(storyRequests[0]);
-        loadImages(response);
+        if(response.isSuccess()) {
+            loadImages(response);
+        }
         return response;
     }
 

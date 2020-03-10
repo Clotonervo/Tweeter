@@ -30,7 +30,9 @@ public class GetFeedTask extends AsyncTask<FeedRequest, Void, FeedResponse> {
     @Override
     protected FeedResponse doInBackground(FeedRequest... feedRequests) {
         FeedResponse response = presenter.getFeed(feedRequests[0]);
-        loadImages(response);
+        if (response.isSuccess()) {
+            loadImages(response);
+        }
         return response;
     }
 

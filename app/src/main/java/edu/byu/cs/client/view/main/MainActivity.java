@@ -21,12 +21,13 @@ import edu.byu.cs.client.model.domain.Follow;
 import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.presenter.MainPresenter;
 import edu.byu.cs.client.view.asyncTasks.FollowUserTask;
+import edu.byu.cs.client.view.asyncTasks.IsFollowingTask;
 import edu.byu.cs.client.view.asyncTasks.LoadImageTask;
 import edu.byu.cs.client.view.asyncTasks.SignOutTask;
 import edu.byu.cs.client.view.asyncTasks.UnfollowUserTask;
 import edu.byu.cs.client.view.cache.ImageCache;
 
-public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutObserver, FollowUserTask.FollowUserContext, UnfollowUserTask.UnfollowUserContext {
+public class MainActivity extends AppCompatActivity implements LoadImageTask.LoadImageObserver, MainPresenter.View, SignOutTask.SignOutObserver, FollowUserTask.FollowUserContext, UnfollowUserTask.UnfollowUserContext, IsFollowingTask.IsFollowingObserver {
 
     private MainPresenter presenter;
     private User user;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         followButton = findViewById(R.id.follow_toggle);
         userSearch = findViewById(R.id.goUser);
 
+        followButton.setVisibility(View.INVISIBLE);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,14 +71,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
         if(user != presenter.getLoggedInUser()){
             fab.hide();
             signOutButton.setVisibility(View.INVISIBLE);
-            if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){
-                System.out.print("Logged in user is following current user");
-                followButton.setText(R.string.unfollow_button);
-            }
-            else {
-                System.out.print("Logged in user is NOT following current user");
-                followButton.setText(R.string.follow_button);
-            }
+            IsFollowingTask isFollowingTask = new IsFollowingTask(this, presenter, false);
+            isFollowingTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
         }
         else {
             followButton.setVisibility(View.INVISIBLE);
@@ -139,16 +136,8 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
 
     @Override
     public void followUser(View v) {
-        if (presenter.isFollowing(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()))){
-            UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
-            followButton.setText(R.string.follow_button);
-            unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
-        }
-        else {
-            FollowUserTask followUserTask = new FollowUserTask(this, presenter);
-            followButton.setText(R.string.unfollow_button);
-            followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
-        }
+        IsFollowingTask isFollowingTask = new IsFollowingTask(this, presenter, true);
+        isFollowingTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
     }
 
     @Override
@@ -174,6 +163,45 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     public void onUnfollowComplete(String message, Boolean success)
     {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean resultOK(boolean result)
+    {
+        followButton.setVisibility(View.VISIBLE);
+        if (result){
+            System.out.print("Logged in user is following current user");
+            followButton.setText(R.string.unfollow_button);
+        }
+        else {
+            System.out.print("Logged in user is NOT following current user");
+            followButton.setText(R.string.follow_button);
+        }
+        return result;
+    }
+
+    @Override
+    public void resultError(String error)
+    {
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void followResult(boolean result)
+    {
+        if (result){
+            UnfollowUserTask unfollowUserTask = new UnfollowUserTask(this, presenter);
+            followButton.setText(R.string.follow_button);
+            unfollowUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+            Toast.makeText(this, "User successfully unfollowed!", Toast.LENGTH_SHORT).show();
+
+        }
+        else {
+            FollowUserTask followUserTask = new FollowUserTask(this, presenter);
+            followButton.setText(R.string.unfollow_button);
+            followUserTask.execute(new Follow(presenter.getLoggedInUser(), presenter.getCurrentUser()));
+            Toast.makeText(this, "User successfully followed!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

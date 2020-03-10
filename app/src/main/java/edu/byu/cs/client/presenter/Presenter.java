@@ -2,6 +2,7 @@ package edu.byu.cs.client.presenter;
 
 import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.model.services.LoginService;
+import edu.byu.cs.client.net.response.UserAliasResponse;
 
 public abstract class Presenter {
 
@@ -13,7 +14,7 @@ public abstract class Presenter {
         return LoginService.getInstance().getLoggedInUser();
     }
 
-    public User getUserByAlias(String alias) { return LoginService.getInstance().aliasToUser(alias); }
+    public UserAliasResponse getUserByAlias(String alias) { return LoginService.getInstance().aliasToUser(alias); }
 
     public void setCurrentUser(User user) {
         LoginService.getInstance().setCurrentUser(user);

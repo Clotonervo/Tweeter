@@ -73,25 +73,25 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
             userImage = itemView.findViewById(R.id.userImage);
             userAlias = itemView.findViewById(R.id.userAlias);
             userName = itemView.findViewById(R.id.userName);
+        }
+
+
+
+        void bindUser(final User user) {
+            userImage.setImageDrawable(ImageCache.getInstance().getImageDrawable(user));
+            userAlias.setText(user.getAlias());
+            userName.setText(user.getName());
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
-                    presenter.setCurrentUser(presenter.getUserByAlias(userAlias.getText().toString()));
+                    presenter.setCurrentUser(user);
 
                     Intent intent = new Intent(view.getContext(), MainActivity.class);
                     itemView.getContext().startActivity(intent);
                 }
             });
-        }
-
-
-
-        void bindUser(User user) {
-            userImage.setImageDrawable(ImageCache.getInstance().getImageDrawable(user));
-            userAlias.setText(user.getAlias());
-            userName.setText(user.getName());
         }
     }
 

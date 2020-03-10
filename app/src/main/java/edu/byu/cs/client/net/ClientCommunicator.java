@@ -17,7 +17,7 @@ class ClientCommunicator {
 
     private final String baseURL;
 
-    ClientCommunicator(String baseURL) {
+    ClientCommunicator(String baseURL){
         this.baseURL = baseURL;
     }
 
@@ -38,6 +38,7 @@ class ClientCommunicator {
                 connection.setDoOutput(true);
 
                 String entityBody = Serializer.serialize(requestInfo);
+                System.out.print(entityBody);
                 try (DataOutputStream os = new DataOutputStream(connection.getOutputStream())) {
                     os.writeBytes(entityBody);
                     os.flush();

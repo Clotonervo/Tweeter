@@ -7,6 +7,7 @@ import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.FollowingRequest;
 import edu.byu.cs.client.net.response.FollowResponse;
 import edu.byu.cs.client.net.response.FollowingResponse;
+import edu.byu.cs.client.net.response.IsFollowingResponse;
 import edu.byu.cs.client.net.response.UnfollowResponse;
 
 public class FollowingService {
@@ -15,7 +16,7 @@ public class FollowingService {
     private static final String URL_PATH1 = "/following";
     private static final String URL_PATH2 = "/unfollowuser";
     private static final String URL_PATH3 = "/followuser";
-    private static final String URL_PATH4 = "/isfollowing";
+    private static final String URL_PATH4 = "/is-following";
     private final ServerFacade serverFacade;
 
     public static FollowingService getInstance() {
@@ -50,14 +51,19 @@ public class FollowingService {
 
     public FollowResponse followUser(Follow follow){
         try{
-            return serverFacade.followUser(follow, URL_PATH2);
+            return serverFacade.followUser(follow, URL_PATH3);
         }
         catch (IOException x){
             return new FollowResponse(false, "IOException caught, something went wrong");
         }
     }
 
-    public boolean isFollowing(Follow follow){
-        return serverFacade.isFollowing(follow);
+    public IsFollowingResponse isFollowing(Follow follow){
+        try {
+            return serverFacade.isFollowing(follow, URL_PATH4);
+        }
+        catch (IOException x){
+            return new IsFollowingResponse("IOException caught, something went wrong");
+        }
     }
 }
