@@ -58,7 +58,7 @@ public class LoginService {
                 currentUser = loginResponse.getUser();
                 setCurrentUser(currentUser);
                 setLoggedInUser(currentUser);
-//                serverFacade.setAuthToken(loginResponse.getAuthToken());
+                serverFacade.setAuthToken(loginResponse.getAuthToken());
                 return loginResponse;
             }
         }
@@ -72,7 +72,7 @@ public class LoginService {
             SignOutResponse response = serverFacade.signOutUser(loggedInUser.getAlias(), URL_PATH2);
             setCurrentUser(null);
             setLoggedInUser(null);
-//            serverFacade.setAuthToken(null);
+            serverFacade.setAuthToken(null);
             return response;
         }
         catch (IOException x){
