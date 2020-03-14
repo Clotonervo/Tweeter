@@ -170,11 +170,9 @@ public class MainActivity extends AppCompatActivity implements LoadImageTask.Loa
     {
         followButton.setVisibility(View.VISIBLE);
         if (result){
-            System.out.print("Logged in user is following current user");
             followButton.setText(R.string.unfollow_button);
         }
         else {
-            System.out.print("Logged in user is NOT following current user");
             followButton.setText(R.string.follow_button);
         }
         return result;

@@ -1,25 +1,19 @@
 package edu.byu.cs.client.net;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.byu.cs.client.model.domain.Follow;
 import edu.byu.cs.client.model.domain.Status;
-import edu.byu.cs.client.model.domain.User;
-import edu.byu.cs.client.model.services.LoginService;
 import edu.byu.cs.client.net.request.FeedRequest;
 import edu.byu.cs.client.net.request.FollowerRequest;
 import edu.byu.cs.client.net.request.FollowingRequest;
 import edu.byu.cs.client.net.request.LoginRequest;
+import edu.byu.cs.client.net.request.PostRequest;
 import edu.byu.cs.client.net.request.SignUpRequest;
 import edu.byu.cs.client.net.request.StoryRequest;
+import edu.byu.cs.client.net.request.UserAliasRequest;
 import edu.byu.cs.client.net.response.FeedResponse;
 import edu.byu.cs.client.net.response.FollowResponse;
 import edu.byu.cs.client.net.response.FollowerResponse;
@@ -51,15 +45,18 @@ public class ServerFacade {
     }
 
     public void setAuthToken(String authToken){
-        if (authToken == null){
-            headers = new TreeMap<>();
-            return;
-        }
-        headers = new TreeMap<>();
         headers.put("Authorization", authToken);
     }
 
-    private ServerFacade(){}
+    public void deleteAuthToken(){
+        headers.remove("Authorization");
+    }
+
+    private ServerFacade(){
+        headers = new TreeMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("accept", "application/json");
+    }
 
     /*
              --------------------- Get Followers
@@ -96,7 +93,7 @@ public class ServerFacade {
   */
         public LoginResponse authenticateUser(LoginRequest request, String urlPath) throws IOException {
             ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-            return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
+            return clientCommunicator.doPost(urlPath, request, headers, LoginResponse.class);
         }
 
 
@@ -107,7 +104,7 @@ public class ServerFacade {
 
     public SignUpResponse registerNewUser(SignUpRequest request, String urlPath) throws IOException{
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, request, null, SignUpResponse.class);
+        return clientCommunicator.doPost(urlPath, request, headers, SignUpResponse.class);
     }
 
     /*
@@ -135,9 +132,10 @@ public class ServerFacade {
 
   */
 
-    public PostResponse post(Status postedStatus, String urlPath) throws IOException {
+    public PostResponse post(Status postedStatus, String urlPath) throws IOException, RuntimeException {
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, postedStatus, headers, PostResponse.class);
+        PostRequest postRequest = new PostRequest(postedStatus);
+        return clientCommunicator.doPost(urlPath, postRequest, headers, PostResponse.class);
     }
 
 
@@ -147,9 +145,9 @@ public class ServerFacade {
 
       */
 
-    public UserAliasResponse aliasToUser(String alias, String urlPath) throws IOException {
+    public UserAliasResponse aliasToUser(UserAliasRequest request, String urlPath) throws IOException {
         ClientCommunicator clientCommunicator = new ClientCommunicator(SERVER_URL);
-        return clientCommunicator.doPost(urlPath, alias, headers, UserAliasResponse.class);
+        return clientCommunicator.doPost(urlPath, request, headers, UserAliasResponse.class);
     }
 
     /*

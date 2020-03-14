@@ -35,8 +35,8 @@ public class FollowingService {
         try{
             return serverFacade.getFollowees(request, URL_PATH1);
         }
-        catch (IOException x){
-            return new FollowingResponse("IOException caught, something went wrong");
+        catch (Exception x){
+            return new FollowingResponse(x.getMessage());
         }
     }
 
@@ -44,8 +44,8 @@ public class FollowingService {
         try{
             return serverFacade.unfollowUser(follow, URL_PATH2);
         }
-        catch (IOException x){
-            return new UnfollowResponse("IOException caught, something went wrong");
+        catch (Exception x){
+            return new UnfollowResponse(x.getMessage());
         }
     }
 
@@ -53,8 +53,8 @@ public class FollowingService {
         try{
             return serverFacade.followUser(follow, URL_PATH3);
         }
-        catch (IOException x){
-            return new FollowResponse(false, "IOException caught, something went wrong");
+        catch (Exception x){
+            return new FollowResponse(false, x.getMessage());
         }
     }
 
@@ -62,8 +62,8 @@ public class FollowingService {
         try {
             return serverFacade.isFollowing(follow, URL_PATH4);
         }
-        catch (IOException x){
-            return new IsFollowingResponse("IOException caught, something went wrong");
+        catch (Exception x){
+            return new IsFollowingResponse(x.getMessage());
         }
     }
 }

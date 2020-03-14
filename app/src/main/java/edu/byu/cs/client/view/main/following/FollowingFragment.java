@@ -178,6 +178,11 @@ public class FollowingFragment extends Fragment implements FollowingPresenter.Vi
         public void followeesRetrieved(FollowingResponse followingResponse) {
             List<User> followees = followingResponse.getFollowees();
 
+            if(!followingResponse.isSuccess()){
+                Toast.makeText(getContext(), followingResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             lastFollowee = (followees.size() > 0) ? followees.get(followees.size() -1) : null;
             hasMorePages = followingResponse.hasMorePages();
 

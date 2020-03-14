@@ -29,7 +29,7 @@ public class StoryService {
             StoryResponse signUpResponse = serverFacade.getStory(storyRequest, URL_PATH);
             return signUpResponse;
         }
-        catch (IOException x){
+        catch (Exception x){
             return new StoryResponse(x.getMessage());
         }
     }

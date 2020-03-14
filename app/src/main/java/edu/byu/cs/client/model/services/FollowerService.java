@@ -29,7 +29,7 @@ public class FollowerService {
         try {
             return serverFacade.getFollowers(request, URL_PATH);
         }
-        catch (IOException x){
+        catch (Exception x){
             return new FollowerResponse(x.getMessage());
         }
     }

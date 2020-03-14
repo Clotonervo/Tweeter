@@ -175,6 +175,11 @@ public class FollowerFragment extends Fragment implements FollowerPresenter.View
         public void followersRetrieved(FollowerResponse followingResponse) {
             List<User> followers = followingResponse.getFollowers();
 
+            if(!followingResponse.isSuccess()){
+                Toast.makeText(getContext(), followingResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             lastFollower = (followers.size() > 0) ? followers.get(followers.size() -1) : null;
             hasMorePages = followingResponse.hasMorePages();
 

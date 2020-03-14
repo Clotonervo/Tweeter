@@ -29,7 +29,7 @@ public class FeedService {
             FeedResponse response = serverFacade.getFeed(feedRequest, URL_PATH);
             return response;
         }
-        catch (IOException x){
+        catch (Exception x){
             return new FeedResponse(x.getMessage());
         }
     }

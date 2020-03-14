@@ -142,7 +142,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         }
 
         @Override
-        public void userSuccess(User user)
+        public void userSuccess(User user)          //TODO: Fix this
         {
             if(user != null){
                 presenter.setCurrentUser(user);
@@ -158,7 +158,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
         @Override
         public void userError(String error)
         {
-            Toast.makeText(getContext(), "Something went wrong when getting the user!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -239,7 +239,7 @@ public class StoryFragment extends Fragment implements StoryPresenter.View {
             List<Status> statusList = storyResponse.getStatusList();
 
             if(!storyResponse.isSuccess()){
-                Toast.makeText(getContext(), "Error retrieving story", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), storyResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
 

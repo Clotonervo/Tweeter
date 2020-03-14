@@ -99,15 +99,25 @@ class ClientCommunicator {
 
     private String getResponse(HttpURLConnection connection) throws IOException {
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+        int status = connection.getResponseCode();
 
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+        if(status == 200) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                return response.toString();
             }
-
-            return response.toString();
+        }
+        else if(status == 400){
+            throw new RuntimeException("Client Error! Invalid request");
+        }
+        else {
+            throw new RuntimeException("Server Error! Try action again");
         }
     }
 }

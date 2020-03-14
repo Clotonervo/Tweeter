@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     }
 
     @Override
-    public void userSuccess(User user)
+    public void userSuccess(User user)              //Todo: fix this
     {
         if(user != null){
             presenter.setCurrentUser(user);
@@ -61,6 +61,6 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @Override
     public void userError(String error)
     {
-        Toast.makeText(this, "Something went wrong when getting the user!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 }

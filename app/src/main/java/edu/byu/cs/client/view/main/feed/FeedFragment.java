@@ -87,7 +87,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
                 public void onClick(View view) {
                     Toast.makeText(getContext(), "You selected '" + userName.getText() + "'.", Toast.LENGTH_SHORT).show();
                     UserAliasTask userAliasTask = new UserAliasTask(instance, presenter);
-                    userAliasTask.execute(userName.getText().toString());
+                    userAliasTask.execute(userAlias.getText().toString());
                 }
             });
         }
@@ -153,7 +153,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
         }
 
         @Override
-        public void userSuccess(User user)
+        public void userSuccess(User user)          //TODO: fix this
         {
             if(user != null){
                 presenter.setCurrentUser(user);
@@ -248,7 +248,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
         @Override
         public void feedRetrieved(FeedResponse feedResponse) {
             if (!feedResponse.isSuccess()){
-                Toast.makeText(getContext(), "Error retrieving feed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), feedResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
             List<Status> statusList = feedResponse.getStatuses();

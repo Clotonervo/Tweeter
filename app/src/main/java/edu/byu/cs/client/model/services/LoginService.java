@@ -6,6 +6,7 @@ import java.net.URL;
 import edu.byu.cs.client.model.domain.User;
 import edu.byu.cs.client.net.ServerFacade;
 import edu.byu.cs.client.net.request.LoginRequest;
+import edu.byu.cs.client.net.request.UserAliasRequest;
 import edu.byu.cs.client.net.response.LoginResponse;
 import edu.byu.cs.client.net.response.SignOutResponse;
 import edu.byu.cs.client.net.response.UserAliasResponse;
@@ -62,7 +63,7 @@ public class LoginService {
                 return loginResponse;
             }
         }
-        catch(IOException x){
+        catch(Exception x){
             return new LoginResponse(x.getMessage());
         }
     }
@@ -72,19 +73,21 @@ public class LoginService {
             SignOutResponse response = serverFacade.signOutUser(loggedInUser.getAlias(), URL_PATH2);
             setCurrentUser(null);
             setLoggedInUser(null);
-            serverFacade.setAuthToken(null);
+            serverFacade.deleteAuthToken();
             return response;
         }
-        catch (IOException x){
+        catch (Exception x){
             return new SignOutResponse(false, x.getMessage());
         }
     }
 
     public UserAliasResponse aliasToUser(String alias) {
         try {
-            return serverFacade.aliasToUser(alias, URL_PATH3);
+            UserAliasRequest request = new UserAliasRequest(alias);
+            UserAliasResponse response = serverFacade.aliasToUser(request, URL_PATH3);
+            return response;
         }
-        catch (IOException x){
+        catch (Exception x){
             return null;
         }
     }

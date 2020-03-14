@@ -28,10 +28,11 @@ public class PostService {
     public PostResponse postStatus(String postedStatus){
         Status status = new Status(LoginService.getInstance().getCurrentUser(), postedStatus);
         try{
-            return serverFacade.post(status, URL_PATH);
+            PostResponse postResponse = serverFacade.post(status, URL_PATH);
+            return postResponse;
         }
-        catch (IOException x){
-            return new PostResponse(false, "IOException caught, something went wrong");
+        catch (Exception x){
+            return new PostResponse(false, x.getMessage());
         }
     }
 }

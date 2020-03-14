@@ -27,11 +27,8 @@ public class PostActivity extends AppCompatActivity implements PostPresenter.Vie
         setContentView(R.layout.post_popup);
 
         presenter = new PostPresenter(this);
-
         postButton = findViewById(R.id.postButton);
         postMessage = findViewById(R.id.postMessage);
-
-
     }
 
     @Override

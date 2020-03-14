@@ -27,9 +27,10 @@ public class SignUpService {
     public SignUpResponse authenticateUser(SignUpRequest signUpRequest){
         try {
             SignUpResponse signUpResponse = serverFacade.registerNewUser(signUpRequest, URL_PATH);
+            serverFacade.setAuthToken(signUpResponse.getAuthToken());
             return signUpResponse;
         }
-        catch (IOException x){
+        catch (Exception x){
             return new SignUpResponse(x.getMessage());
         }
     }

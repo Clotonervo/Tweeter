@@ -5,6 +5,7 @@ import edu.byu.cs.client.model.domain.User;
 public class SignUpResponse extends Response{
 
     private User signedInUser;
+    private String authToken;
 
     public SignUpResponse(String message) {
         super(false,message);
@@ -25,5 +26,9 @@ public class SignUpResponse extends Response{
 
     public User getUser() {
         return signedInUser;
+    }
+
+    public String getAuthToken(){
+        return authToken;
     }
 }
