@@ -95,9 +95,10 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
         byte[] b = baos.toByteArray();
-        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+        String encImage = Base64.encodeToString(b, Base64.URL_SAFE);
+        String safeImage = encImage.replaceAll("\n","\\n");
 
-        return encImage;
+        return safeImage;
     }
 
     @Override
