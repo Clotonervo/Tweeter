@@ -72,7 +72,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpPresenter
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)         //TODO: get image from s3 correctly
     {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK && data != null){

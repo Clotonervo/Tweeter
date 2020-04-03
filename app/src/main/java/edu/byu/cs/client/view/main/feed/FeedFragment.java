@@ -153,7 +153,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View{
         }
 
         @Override
-        public void userSuccess(User user)          //TODO: fix this
+        public void userSuccess(User user)
         {
             if(user != null){
                 presenter.setCurrentUser(user);

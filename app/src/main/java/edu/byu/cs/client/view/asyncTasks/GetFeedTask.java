@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import edu.byu.cs.client.model.domain.User;
+import edu.byu.cs.client.model.domain.Status;
 import edu.byu.cs.client.net.request.FeedRequest;
 import edu.byu.cs.client.net.response.FeedResponse;
 import edu.byu.cs.client.presenter.FeedPresenter;
@@ -37,7 +38,8 @@ public class GetFeedTask extends AsyncTask<FeedRequest, Void, FeedResponse> {
     }
 
     private void loadImages(FeedResponse response) {
-        for(User user : response.getFollowing()) {
+        for(edu.byu.cs.client.model.domain.Status status : response.getStatuses()) {
+            User user = status.getUser();
 
             Drawable drawable;
 

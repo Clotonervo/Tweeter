@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     }
 
     @Override
-    public void userSuccess(User user)              //Todo: fix this
+    public void userSuccess(User user)
     {
         if(user != null){
             presenter.setCurrentUser(user);
