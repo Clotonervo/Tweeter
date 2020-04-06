@@ -9,13 +9,18 @@ public class SignUpRequest {
     private String image;
 
     public SignUpRequest(String username, String password, String firstName, String lastName, String image){
-        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.image = image;
         if (image == null){
             this.image = "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png";
+        }
+        if (username.contains("@")){
+            this.username = username;
+        }
+        else {
+            this.username = String.format("@%s", username);
         }
     }
 
